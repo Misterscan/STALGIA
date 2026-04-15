@@ -1,6 +1,6 @@
 <div align="center">
 
-# Welcome to STALGIA Docs
+# STALGIA
 
 
 <img src="./static/logo.png" alt="STALGIA Logo">
