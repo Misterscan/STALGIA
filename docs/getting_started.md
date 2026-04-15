@@ -57,5 +57,5 @@ python app.py
 ```
 
 Open a web browser and navigate to:
-- **Main App Interface**: `http://127.0.0.1:5001`
+- **Main App Interface**: `http://127.0.0.1:5001/static/index.html`
 - **Interactive API Docs (Swagger)**: `http://127.0.0.1:5001/apidocs/`
