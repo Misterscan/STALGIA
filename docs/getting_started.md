@@ -29,7 +29,7 @@ This guide explains how to install dependencies and run STALGIA on your local ma
    ```bash
    pip install -r requirements.txt
    ```
-   *Note: Ensure `musicpy`, `google-genai`, `flask`, `flask-cors`, and `pretty_midi` are installed.*
+   *Note: Ensure `musicpy`, `google-genai`, `flask`, `flask-cors`, `flasgger`, and `pretty_midi` are installed.*
 
 ## Configuration
 
@@ -56,4 +56,6 @@ Start the Flask development server from the root directory:
 python app.py
 ```
 
-Open a web browser and navigate to `http://127.0.0.1:5001` or wherever the server console specifies.
+Open a web browser and navigate to:
+- **Main App Interface**: `http://127.0.0.1:5001`
+- **Interactive API Docs (Swagger)**: `http://127.0.0.1:5001/apidocs/`
