@@ -1,6 +1,14 @@
+<div align="center">
+
+# Welcome to STALGIA
+
+<img src="../static/logo.png" alt="STALGIA Logo">
+
 # Getting Started
 
 This guide explains how to install dependencies and run STALGIA on your local machine.
+
+</div>
 
 ## Prerequisites
 

@@ -1,3 +1,13 @@
+<div align="center">
+
+<img src="../static/logo.png" alt="STALGIA Logo"><img src="https://avatars.githubusercontent.com/u/59408627?v=4"  width="150" height="150" alt="Musicpy Creator">
+
+<a href="https://github.com/Rainbow-Dreamer"><strong>Musicpy Creator on GitHub</strong></a>
+
+</div
+
+---
+
 # Building with Musicpy
 
 STALGIA relies on the **[musicpy](https://github.com/musicpy-dev/musicpy)** library to bridge the gap between concept and audio. If you're interested in how the underlying music generation works, or if you want to build your own text-to-music platform, understanding `musicpy` is the first and most important step.

@@ -1,3 +1,11 @@
+<div align="center">
+
+<img src="../static/logo.png" alt="STALGIA Logo">
+
+</div
+
+---
+
 # API Reference
 
 The backend uses a standard REST framework. Endpoints handle data queries, prompt execution, and dynamic file transmission.

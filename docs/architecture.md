@@ -1,6 +1,14 @@
+<div align="center">
+
+<img src="../static/logo.png" alt="STALGIA Logo">
+
+
+
 # Architecture Overview
 
 STALGIA relies on a strictly linear, request-driven data flow. When a user requests a new track, the system processes it through a series of deterministic steps, isolating prompt expansion, code interpretation, and audio rendering into dedicated modules.
+
+</div>
 
 ## Request Lifecycle & Workflow
 
