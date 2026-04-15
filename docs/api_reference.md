@@ -36,7 +36,7 @@ GET /tags
 
 The primary endpoint that triggers the LLM expansion and audio generation routines. Expects a JSON payload.
 
-**HTTP Query**
+**Example Query: Custom Generation**
 ```http
 POST /generate
 Content-Type: application/json
@@ -48,6 +48,18 @@ Content-Type: application/json
     "tempo": "120 BPM",
     "key": "C minor"
   }
+}
+```
+
+**Example Query: Prepackaged Example Bypass**
+To bypass the LLM and instantly retrieve a guaranteed output, send the exact string of a prepackaged example as the prompt:
+```http
+POST /generate
+Content-Type: application/json
+
+{
+  "prompt": "A chill lo-fi hip hop beat at 80 BPM. Soft, jazzy electric piano seventh chords playing a relaxed progression, layered over a slow, simple drum beat.",
+  "config": {}
 }
 ```
 

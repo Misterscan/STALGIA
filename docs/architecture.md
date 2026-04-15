@@ -25,14 +25,18 @@ sequenceDiagram
     Client->>API: POST /generate (Prompt + Config)
     API->>Gen: generate_music()
     
-    rect rgb(30, 40, 60)
-        Note right of Gen: Pipeline Stage 1
-        Gen->>Gen: Expand Prompt into rigid Musical Brief
-    end
-    
-    rect rgb(40, 50, 70)
-        Note right of Gen: Pipeline Stage 2
-        Gen->>Gen: Translate Brief into pure musicpy Code
+    alt User Selects a Prepackaged Example
+        Gen->>Gen: Short-circuit LLM calls (Retrieve predefined brief & code)
+    else New Generation via LLM
+        rect rgb(30, 40, 60)
+            Note right of Gen: Pipeline Stage 1
+            Gen->>Gen: Expand Prompt into rigid Musical Brief
+        end
+        
+        rect rgb(40, 50, 70)
+            Note right of Gen: Pipeline Stage 2
+            Gen->>Gen: Translate Brief into pure musicpy Code
+        end
     end
     
     Gen->>Exec: execute code via exec()
@@ -58,7 +62,7 @@ sequenceDiagram
 
 1. **Input Collection:** The frontend (`static/script.js`) collates the user's text prompt along with tags like genre, tempo, instruments, key, and mood into a JSON payload and makes a request to the `/generate` endpoint.
 2. **Translation & Expansion:** The `gemini_service.py` receives the payload. It uses a structured system prompt to form a "Musical Brief"—a detailed blueprint specifying measure counts, motifs, harmony, and instrument behaviors.
-3. **Code Generation:** The brief is then translated into explicit `musicpy` Python code. Rather than guessing black-box audio outputs, the pipeline rigorously focuses on exact MIDI events, chords, rhythms, and track structures.
+3. **Code Generation / Retrieval:** If the user has selected a Prepackaged Example from the UI, the system short-circuits the LLM and instantly retrieves the predefined brief and code from `prepackaged.py`. For custom prompts, the brief is translated into explicit `musicpy` Python code by the LLM pipeline.
 4. **Dynamic Execution:** Using an isolated `exec()` environment, the generated Python string is run on the server. This explicitly constructs chords, scales, patterns, and tracks, mapping them to standard GM instrument integers. 
 5. **Retry Mechanism:** Because code generation can occasionally produce syntax errors or unsupported concatenations, the execution block intercepts exceptions. If a `ValueError` or `SyntaxError` throws from the Python execution, the traceback is passed back to the translation layer for one immediate self-correction attempt.
 6. **MIDI Writing:** Once execution succeeds, the generated `result` object is validated and saved as `output.mid`. The frontend receives the brief, the code, and a URL to fetch the MIDI.
@@ -72,14 +76,19 @@ STALGIA/
 ├── app/                        # Application package logic
 │   ├── __init__.py             # App factory and Blueprint registration.
 │   ├── config.py               # Environmental variables, models, and SF2 pathing.
+│   ├── examples/               # Prepackaged verified generated examples.
+│   │   ├── __init__.py
+│   │   └── prepackaged.py      # Hardcoded examples and their matching outputs.
 │   ├── prompts/                # Core System Prompts indicating rules and syntax.
 │   ├── routes/api.py           # Flask Blueprint exposing endpoints.
 │   ├── services/
 │   │   ├── gemini_service.py   # Translation Pipeline, Code Gen, and Execution handling.
 │   │   └── audio_service.py    # Processes MIDI into MP3/WAV using `daw.export`.
+├── docs/                       # Project documentation.
 ├── static/                     # Frontend web elements (HTML, CSS, JS).
 ├── tags/                       # JSON lists populating UI selection options.
-├── docs/                       # Project documentation.
+├── tests/                      # Testing suite for API and generation features.
+├── requirements.txt            # Python dependencies.
 └── README.md                   # Documentation landing page.
 ```
 

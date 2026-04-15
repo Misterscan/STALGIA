@@ -13,6 +13,7 @@
 
 - **Code-Driven Music Generation:** All music is explicitly sequenced via Python syntax using `musicpy`, ensuring the output is perfectly structured, readable, and editable.
 - **Natural Language Translation:** Employs a dual-stage NLP process to expand high-level descriptions into a musical brief and reliably translate them into executable Python code.
+- **Pre-packaged Examples:** Includes a fast-path mechanism to instantly bypass LLM generation and serve guaranteed-quality base code blocks when a user selects a preset example from the frontend.
 - **Configurable Attributes:** Provide genre, tempo, instruments, key, and mood for precise structural control over the generated composition.
 - **Modular Pipeline:** Extensible Flask application featuring independent APIs and separated concerns.
 - **DAW Rendering:** In-memory sequence rendering from Python code straight into MP3, WAV, or MIDI formats using a multi-channel SF2 soundfont setup.

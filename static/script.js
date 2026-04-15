@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
         upbeat_synthwave: "An upbeat, driving 80s synthwave track at 130 BPM. It features a fast, pulsing 16th-note synth bassline, a catchy bright synthesizer melody, and a driving four-on-the-floor drum beat.",
         cinematic_orchestral: "A slow, grandiose cinematic string progression at 60 BPM. Long, sustained minor and major chords swelling out slowly to create a sense of scale and heroism.",
         energetic_punk: "A fast and aggressive pop punk rock loop at 160 BPM. Distorted electric guitar power chords playing eighth notes, over loud rock drum patterns.",
-        classical_piano: "A delicate classical piece for solo acoustic grand piano at 100 BPM. It features fast, flowing A minor arpeggios that rise and fall gracefully."
+        classical_piano: "A delicate classical piece for solo acoustic grand piano at 100 BPM. It features fast, flowing A minor arpeggios that rise and fall gracefully.",
+        heavy_dubstep: "A heavy, booming dubstep track at 140 BPM. It features a slow, half-time beat with a massive snare drum, and aggressive, modulating electronic synthesizer growls.",
+        shuffle_blues: "A 12-bar blues classic in E major at 110 BPM. Shuffle feel with an electric guitar playing the rhythmic shuffle riff, a piano adding turnarounds, and straight blues drums.",
     };
 
     const exampleSelect = document.getElementById('example-select');
