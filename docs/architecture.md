@@ -68,18 +68,21 @@ sequenceDiagram
 
 ```text
 musicpy/
-├── app.py               # Minimal entry point initializing the Flask app.
-├── app/                 # Application package logic
-│   ├── __init__.py      # App factory and Blueprint registration.
-│   ├── config.py        # Environmental variables, models, and SF2 pathing.
-│   ├── prompts/         # Core System Prompts indicating rules and syntax.
-│   ├── routes/api.py    # Flask Blueprint exposing endpoints.
+├── app.py                      # Minimal entry point initializing the Flask app.
+├── app/                        # Application package logic
+│   ├── __init__.py             # App factory and Blueprint registration.
+│   ├── config.py               # Environmental variables, models, and SF2 pathing.
+│   ├── prompts/                # Core System Prompts indicating rules and syntax.
+│   ├── routes/api.py           # Flask Blueprint exposing endpoints.
 │   ├── services/
-│   │   ├── gemini_service.py # Translation Pipeline, Code Gen, and Execution handling.
-│   │   └── audio_service.py  # Processes MIDI into MP3/WAV using `daw.export`.
-├── static/              # Frontend web elements (HTML, CSS, JS).
-├── tags/                # JSON lists populating UI selection options.
-└── docs/                # Project documentation.
+│   │   ├── gemini_service.py   # Translation Pipeline, Code Gen, and Execution handling.
+│   │   └── audio_service.py    # Processes MIDI into MP3/WAV using `daw.export`.
+├── static/                     # Frontend web elements (HTML, CSS, JS).
+├── tags/                       # JSON lists populating UI selection options.
+├── docs/                       # Project documentation.
+└── README.md                   # Documentation landing page.
+
+
 ```
 
 

@@ -3,7 +3,7 @@
 # Welcome to STALGIA Docs
 
 
-<img src="../static/logo.png" alt="STALGIA Logo">
+<img src="./static/logo.png" alt="STALGIA Logo">
 
 **STALGIA** is a musical environment that translates conversational prompts into fully-fledged, executable Python code using the [`musicpy`](https://github.com/musicpy-dev/musicpy) library. Rather than generating raw audio from a black box, STALGIA relies purely on Python code to sequence notes, chords, and rhythms, turning your specifications into high-quality MIDI and audio files.
 
@@ -19,7 +19,7 @@
 
 ## Documentation Index
 
-- [Getting Started](getting_started.md) — Pre-requisites, Installation, and execution commands.
-- [Architecture](architecture.md) — How the two-stage generation pipeline and file layout function.
-- [Building with Musicpy](building_with_musicpy.md) — What Musicpy is, how its syntax works, and how to build STALGIA-like products.
-- [API Reference](api_reference.md) — Available REST endpoints and request/response shapes.
+- [Getting Started](/docs/getting_started.md) — Pre-requisites, Installation, and execution commands.
+- [Architecture](/docs/architecture.md) — How the two-stage generation pipeline and file layout function.
+- [Building with Musicpy](docs/building_with_musicpy.md) — What Musicpy is, how its syntax works, and how to build STALGIA-like products.
+- [API Reference](/docs/api_reference.md) — Available REST endpoints and request/response shapes.
