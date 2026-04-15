@@ -1,0 +1,134 @@
+[
+  {
+    "instrument": "Piano",
+    "textures": ["Bright", "Clear", "Smooth", "Resonant", "Balanced"]
+  },
+  {
+    "instrument": "Electric Guitar",
+    "textures": ["Punchy", "Sharp", "Gritty", "Bright", "Ethereal"]
+  },
+  {
+    "instrument": "Acoustic Guitar",
+    "textures": ["Warm", "Mellow", "Soft", "Natural", "Balanced"]
+  },
+  {
+    "instrument": "Drums",
+    "textures": ["Percussive", "Punchy", "Rhythmic", "Heavy", "Dry"]
+  },
+  {
+    "instrument": "Bass Guitar",
+    "textures": ["Bassy", "Smooth", "Warm", "Full", "Balanced"]
+  },
+  {
+    "instrument": "Violin",
+    "textures": ["Bright", "Clear", "Lush", "Ethereal", "Resonant"]
+  },
+  {
+    "instrument": "Cello",
+    "textures": ["Warm", "Mellow", "Rich", "Smooth", "Balanced"]
+  },
+  {
+    "instrument": "Saxophone",
+    "textures": ["Warm", "Raspy", "Smooth", "Rich", "Ethereal"]
+  },
+  {
+    "instrument": "Flute",
+    "textures": ["Airy", "Bright", "Clear", "Soft", "Transparent"]
+  },
+  {
+    "instrument": "Trumpet",
+    "textures": ["Bright", "Punchy", "Sharp", "Clear", "Ethereal"]
+  },
+  {
+    "instrument": "Synthesizer",
+    "textures": ["Electronic", "Smooth", "Ethereal", "Punchy", "Lush"]
+  },
+  {
+    "instrument": "Vocals",
+    "textures": ["Warm", "Clear", "Smooth", "Rich", "Balanced"]
+  },
+  {
+    "instrument": "Strings Section",
+    "textures": ["Lush", "Rich", "Smooth", "Warm", "Balanced"]
+  },
+  {
+    "instrument": "Percussion",
+    "textures": ["Percussive", "Dry", "Rhythmic", "Sharp", "Punchy"]
+  },
+  {
+    "instrument": "Organ",
+    "textures": ["Warm", "Full", "Resonant", "Rich", "Balanced"]
+  },
+  {
+    "instrument": "Harmonica",
+    "textures": ["Raspy", "Warm", "Gritty", "Mellow", "Ethereal"]
+  },
+  {
+    "instrument": "Glockenspiel",
+    "textures": ["Bright", "Clear", "Airy", "Soft", "Ethereal"]
+  },
+  {
+    "instrument": "Cymbals",
+    "textures": ["Sharp", "Punchy", "Percussive", "Bright", "Ethereal"]
+  },
+  {
+    "instrument": "Woodwind Section",
+    "textures": ["Smooth", "Airy", "Bright", "Clear", "Balanced"]
+  },
+  {
+    "instrument": "Electric Bass",
+    "textures": ["Bassy", "Smooth", "Warm", "Full", "Balanced"]
+  },
+  {
+    "instrument": "Snare Drum",
+    "textures": ["Punchy", "Sharp", "Rhythmic", "Dry", "Percussive"]
+  },
+  {
+    "instrument": "Bass Drum",
+    "textures": ["Heavy", "Deep", "Resonant", "Full", "Powerful"]
+  },
+  {
+    "instrument": "Tom-Tom",
+    "textures": ["Warm", "Resonant", "Lush", "Smooth", "Balanced"]
+  },
+  {
+    "instrument": "Hi-Hat",
+    "textures": ["Bright", "Tight", "Sharp", "Percussive", "Ethereal"]
+  },
+  {
+    "instrument": "Tambourine",
+    "textures": ["Shimmering", "Bright", "Percussive", "Airy", "Ethereal"]
+  },
+  {
+    "instrument": "Conga",
+    "textures": ["Warm", "Lush", "Rhythmic", "Smooth", "Balanced"]
+  },
+  {
+    "instrument": "Bongo",
+    "textures": ["Bright", "Punchy", "Sharp", "Rhythmic", "Ethereal"]
+  },
+  {
+    "instrument": "Djembe",
+    "textures": ["Warm", "Percussive", "Rhythmic", "Resonant", "Earthly"]
+  },
+  {
+    "instrument": "Timpani",
+    "textures": ["Deep", "Resonant", "Lush", "Smooth", "Balanced"]
+  },
+  {
+    "instrument": "Tabla",
+    "textures": ["Bright", "Sharp", "Percussive", "Rhythmic", "Ethereal"]
+  },
+  {
+    "instrument": "Frame Drum",
+    "textures": ["Warm", "Smooth", "Rhythmic", "Ethereal", "Balanced"]
+  },
+  {
+    "instrument": "Tambourine",
+    "textures": ["Shimmering", "Bright", "Percussive", "Airy", "Ethereal"]
+  },
+  {
+    "instrument": "Electronic Drum",
+    "textures": ["Electronic", "Smooth", "Punchy", "Clear", "Modern"]
+  }
+]

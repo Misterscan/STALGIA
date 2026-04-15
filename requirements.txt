@@ -1,0 +1,8 @@
+flask
+flask-cors
+musicpy
+google-genai
+pytest
+pretty_midi
+scipy
+wheel

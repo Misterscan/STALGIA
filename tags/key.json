@@ -1,0 +1,98 @@
+[
+  {
+    "key": "C Major",
+    "description": "The happy key! It has no sharps or flats, making it super easy to play. It sounds bright and cheerful, like a sunny day. Think of it as the musical equivalent of a rainbow with no clouds."
+  },
+  {
+    "key": "A Minor",
+    "description": "The sad key! It's the relative minor of C Major, so it shares the same notes but sounds more emotional. It's often used in music that feels introspective or melancholy."
+  },
+  {
+    "key": "G Major",
+    "description": "A bright and cheerful key with one sharp (F#). It sounds like a sunny day with a little sparkle. It's often used in music that feels uplifting or adventurous."
+  },
+  {
+    "key": "E Minor",
+    "description": "The emotional key! It's the relative minor of G Major, so it shares the same notes but sounds more introspective. It's often used in music that feels heartfelt or reflective."
+  },
+  {
+    "key": "D Major",
+    "description": "A happy and energetic key with two sharps (F# and C#). It sounds like a sunny day with a little extra pep. It's often used in music that feels lively or upbeat."
+  },
+  {
+    "key": "B Minor",
+    "description": "The moody key! It's the relative minor of D Major, so it shares the same notes but sounds more mysterious. It's often used in music that feels dramatic or intense."
+  },
+  {
+    "key": "A Major",
+    "description": "A bright and bold key with three sharps (F#, C#, and G#). It sounds like a sunny day with a lot of energy. It's often used in music that feels powerful or triumphant."
+  },
+  {
+    "key": "F# Minor",
+    "description": "The mysterious key! It's the relative minor of A Major, so it shares the same notes but sounds more adventurous. It's often used in music that feels exciting or dramatic."
+  },
+  {
+    "key": "E Major",
+    "description": "A bright and energetic key with four sharps (F#, C#, G#, and D#). It sounds like a sunny day with a lot of sparkle. It's often used in music that feels uplifting or adventurous."
+  },
+  {
+    "key": "C# Minor",
+    "description": "The emotional key! It's the relative minor of E Major, so it shares the same notes but sounds more introspective. It's often used in music that feels heartfelt or reflective."
+  },
+  {
+    "key": "B Major",
+    "description": "A bright and bold key with five sharps (F#, C#, G#, D#, and A#). It sounds like a sunny day with a lot of energy. It's often used in music that feels powerful or triumphant."
+  },
+  {
+    "key": "G# Minor",
+    "description": "The adventurous key! It's the relative minor of B Major, so it shares the same notes but sounds more mysterious. It's often used in music that feels exciting or dramatic."
+  },
+  {
+    "key": "F# Major",
+    "description": "A bright and bold key with six sharps (F#, C#, G#, D#, A#, and E#). It sounds like a sunny day with a lot of energy. It's often used in music that feels powerful or triumphant."
+  },
+  {
+    "key": "D# Minor",
+    "description": "The mysterious key! It's the relative minor of F# Major, so it shares the same notes but sounds more adventurous. It's often used in music that feels exciting or dramatic."
+  },
+  {
+    "key": "C Minor",
+    "description": "The sad key! It's a minor key with a dark and emotional sound. It's often used in music that feels introspective or melancholy."
+  },
+  {
+    "key": "G Minor",
+    "description": "The moody key! It's a minor key with a dark and mysterious sound. It's often used in music that feels dramatic or intense."
+  },
+  {
+    "key": "D Minor",
+    "description": "The emotional key! It's a minor key with a dark and introspective sound. It's often used in music that feels heartfelt or reflective."
+  },
+  {
+    "key": "A Minor",
+    "description": "The sad key! It's a minor key with a dark and emotional sound. It's often used in music that feels introspective or melancholy."
+  },
+  {
+    "key": "E Minor",
+    "description": "The emotional key! It's a minor key with a dark and introspective sound. It's often used in music that feels heartfelt or reflective."
+  },
+  {
+    "key": "B Minor",
+    "description": "The moody key! It's a minor key with a dark and mysterious sound. It's often used in music that feels dramatic or intense."
+  },
+  {
+    "key": "F Minor",
+    "description": "The sad key! It's a minor key with a dark and emotional sound. It's often used in music that feels introspective or melancholy."
+  },
+  {
+    "key": "C# Minor",
+    "description": "The emotional key! It's a minor key with a dark and introspective sound. It's often used in music that feels heartfelt or reflective."
+  },
+  {
+    "key": "G# Minor",
+    "description": "The mysterious key! It's a minor key with a dark and adventurous sound. It's often used in music that feels exciting or dramatic."
+  },
+  {
+    "key": "D# Minor",
+    "description": "The adventurous key! It's a minor key with a dark and mysterious sound. It's often used in music that feels exciting or dramatic."
+  }
+]

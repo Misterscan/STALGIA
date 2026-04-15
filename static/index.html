@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STALGIA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- MIDI Player Web Components -->
+    <script src="https://cdn.jsdelivr.net/combine/npm/html-midi-player@1.5.0/dist/midi-player.min.js,npm/html-midi-player@1.5.0/dist/midi-visualizer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+</head>
+<body>
+    <main class="core-interface">
+        <header class="title-node">
+            <h1>STALGIA</h1>
+            <p class="subtitle">Prompt -> Code -> Music</p>
+        </header>
+
+        <!-- Primary Input Node -->
+        <section class="input-node">
+            <textarea id="prompt-input" placeholder="E.g., A melancholic piano ballad about a rainy night in Tokyo..."></textarea>
+            
+            <details class="params-disclosure">
+                <summary>+ CUSTOMIZE</summary>
+                <div class="params-grid">
+                    <div class="param-cell"><label>GENRE</label><select id="config-genre"><option value="">ANY</option></select></div>
+                    <div class="param-cell"><label>MOOD</label><select id="config-mood"><option value="">ANY</option></select></div>
+                    <div class="param-cell"><label>TEMPO</label><input id="config-tempo" type="number" placeholder="AUTO"></div>
+                    <div class="param-cell"><label>KEY/SCALE</label><select id="config-key"><option value="">AUTO</option></select></div>
+                    <div class="param-cell full"><label>STRUCTURE</label><select id="config-structure"><option value="">AUTO</option></select></div>
+                    <div class="param-cell full"><label>INSTRUMENTS</label><select id="config-instruments" multiple></select></div>
+                    <div class="param-cell full"><label>NOTES</label><textarea id="config-notes" placeholder="Keep the piano melody repetitive and melancholic, dense percussion, subtle strings, etc."></textarea></div>
+                </div>
+            </details>
+
+            <button id="generate-btn">
+                <span class="btn-text">Compose</span>
+                <span class="loader-text hidden">Composing...</span>
+            </button>
+        </section>
+
+        <!-- Results Node (Rendered only when needed) -->
+        <section id="result-section" class="output-node hidden">
+            <div id="generation-warning" class="warning-msg hidden"></div>
+
+            <div class="output-module view-player">
+                <h2>Audio</h2>
+                <midi-visualizer type="piano-roll" id="midi-visualizer" src=""></midi-visualizer>
+                <midi-player id="midi-player" src="" sound-font="https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus"></midi-player>
+                
+                <div class="hq-container">
+                    <p id="audio-loading-text" class="hidden-fade">Synthesizing audio...</p>
+                    <audio id="audio-player" controls style="display: none;"></audio>
+                </div>
+            </div>
+
+            <div class="output-module view-exports actions-container">
+                <h2>Downloads</h2>
+                <div class="export-grid">
+                    <a href="/download/midi" id="download-midi" class="export-btn">MIDI</a>
+                    <button class="export-btn audio-download" data-format="mp3">MP3</button>
+                    <button class="export-btn audio-download" data-format="wav">WAV</button>
+                    <button class="export-btn audio-download" data-format="flac">FLAC</button>
+                </div>
+            </div>
+
+            <div class="output-module view-brief">
+                <h2>Musical Brief</h2>
+                <div id="brief-text" class="markdown-content text-left"></div>
+            </div>
+
+            <section id="code-section" class="output-module view-code hidden">
+                <h2>Source Code</h2>
+                <pre><code id="code-text"></code></pre>
+            </section>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Wire loading text logic to match script.js expectations
+        const btn = document.getElementById('generate-btn');
+        const observer = new MutationObserver(() => {
+            const isLoading = btn.classList.contains('loading');
+            btn.querySelector('.btn-text').style.display = isLoading ? 'none' : 'block';
+            btn.querySelector('.loader-text').style.display = isLoading ? 'block' : 'none';
+        });
+        observer.observe(btn, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>
