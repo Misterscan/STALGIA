@@ -1,8 +1,6 @@
 flask
 flask-cors
-musicpy
+musicpy[daw]
 google-genai
 pytest
 pretty_midi
-scipy
-wheel
