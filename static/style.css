@@ -49,6 +49,37 @@ body {
     gap: 1.5rem;
 }
 
+.prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: -1rem; /* tight gap before textarea */
+}
+
+.prompt-header label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+}
+
+.examples-dropdown select {
+    background: #111;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+}
+
+.examples-dropdown select:focus {
+    outline: none;
+    border-color: var(--dim);
+}
+
 /* Inputs */
 textarea, input, select {
     background: transparent;

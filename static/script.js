@@ -21,6 +21,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const apiBase = 'http://localhost:5001'; // Connect to local Flask server
 
+    const examples = {
+        dreamy_lofi: "A chill lo-fi hip hop beat at 80 BPM. Soft, jazzy electric piano seventh chords playing a relaxed progression, layered over a slow, simple drum beat.",
+        upbeat_synthwave: "An upbeat, driving 80s synthwave track at 130 BPM. It features a fast, pulsing 16th-note synth bassline, a catchy bright synthesizer melody, and a driving four-on-the-floor drum beat.",
+        cinematic_orchestral: "A slow, grandiose cinematic string progression at 60 BPM. Long, sustained minor and major chords swelling out slowly to create a sense of scale and heroism.",
+        energetic_punk: "A fast and aggressive pop punk rock loop at 160 BPM. Distorted electric guitar power chords playing eighth notes, over loud rock drum patterns.",
+        classical_piano: "A delicate classical piece for solo acoustic grand piano at 100 BPM. It features fast, flowing A minor arpeggios that rise and fall gracefully."
+    };
+
+    const exampleSelect = document.getElementById('example-select');
+    if (exampleSelect) {
+        exampleSelect.addEventListener('change', (e) => {
+            const key = e.target.value;
+            if (key && examples[key]) {
+                promptInput.value = examples[key];
+            }
+        });
+    }
+
     async function loadTags() {
         try {
             const response = await fetch(`${apiBase}/tags`);

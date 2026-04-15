@@ -67,7 +67,7 @@ sequenceDiagram
 ## Codebase Structure
 
 ```text
-musicpy/
+STALGIA/
 ├── app.py                      # Minimal entry point initializing the Flask app.
 ├── app/                        # Application package logic
 │   ├── __init__.py             # App factory and Blueprint registration.
@@ -81,8 +81,6 @@ musicpy/
 ├── tags/                       # JSON lists populating UI selection options.
 ├── docs/                       # Project documentation.
 └── README.md                   # Documentation landing page.
-
-
 ```
 
 

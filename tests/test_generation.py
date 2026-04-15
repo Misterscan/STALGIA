@@ -6,7 +6,7 @@ import os
 # Add parent dir to path for imports if needed
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import build_generation_prompt
+from app.prompts.prompts import build_generation_prompt
 
 def test_musicpy_syntax_accuracy():
     """Verify that common Musicpy syntax pieces we expect AI to generate actually work."""
@@ -65,7 +65,7 @@ def test_ai_guidelines_syntax_accuracy():
         pytest.fail(f"AI Guideline syntax failed! Our prompt instructions are invalid: {e}")
 
 def test_result_extraction_logic():
-    """Simulate the exec() logic used in app.py to ensure it captures results."""
+    """Simulate the exec() logic used in gemini_service.py to ensure it captures results."""
     code = """
 from musicpy import *
 guitar = C('Cmaj7') @ [1,2,3,4]

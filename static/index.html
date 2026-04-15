@@ -26,6 +26,19 @@
 
         <!-- Primary Input Node -->
         <section class="input-node">
+            <div class="prompt-header">
+                <label for="prompt-input">PROMPT</label>
+                <div class="examples-dropdown">
+                    <select id="example-select">
+                        <option value="">Try an example...</option>
+                        <option value="dreamy_lofi">Dreamy Lo-Fi Hip Hop</option>
+                        <option value="upbeat_synthwave">Upbeat Synthwave / Synth-Pop</option>
+                        <option value="cinematic_orchestral">Cinematic Orchestral Build</option>
+                        <option value="energetic_punk">Energetic Pop Punk</option>
+                        <option value="classical_piano">Classical Piano Arpeggios</option>
+                    </select>
+                </div>
+            </div>
             <textarea id="prompt-input" placeholder="E.g., A melancholic piano ballad about a rainy night in Tokyo..."></textarea>
             
             <details class="params-disclosure">
