@@ -10,7 +10,7 @@
 
 # Building with Musicpy
 
-STALGIA relies on the **[musicpy](https://github.com/musicpy-dev/musicpy)** library to bridge the gap between concept and audio. If you're interested in how the underlying music generation works, or if you want to build your own text-to-music platform, understanding `musicpy` is the first and most important step.
+STALGIA relies on the **[musicpy](https://github.com/Rainbow-Dreamer/musicpy)** library to bridge the gap between concept and audio. If you're interested in how the underlying music generation works, or if you want to build your own text-to-music platform, understanding `musicpy` is the first and most important step.
 
 ## What is Musicpy?
 

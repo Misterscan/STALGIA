@@ -5,7 +5,7 @@
 
 <img src="./static/logo.png" alt="STALGIA Logo">
 
-**STALGIA** is a musical environment that translates conversational prompts into fully-fledged, executable Python code using the [`musicpy`](https://github.com/musicpy-dev/musicpy) library. Rather than generating raw audio from a black box, STALGIA relies purely on Python code to sequence notes, chords, and rhythms, turning your specifications into high-quality MIDI and audio files.
+**STALGIA** is a musical environment that translates conversational prompts into fully-fledged, executable Python code using the [`musicpy`](https://github.com/Rainbow-Dreamer/musicpy) library. Rather than generating raw audio from a black box, STALGIA relies purely on Python code to sequence notes, chords, and rhythms, turning your specifications into high-quality MIDI and audio files.
 
 </div>
 
