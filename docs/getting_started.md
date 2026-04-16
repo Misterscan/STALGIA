@@ -26,7 +26,7 @@ This guide explains how to install dependencies and run STALGIA on your local ma
 3. **Activate the virtual environment:**
    - **Windows (PowerShell):** 
    ```Powershell
-   .\.venv\Scripts\Activate.ps1`
+   .\.venv\Scripts\Activate.ps1
    ```
    - **macOS/Linux:** 
    ```bash
