@@ -1,8 +1,7 @@
 import os
-from google import genai
+import pretty_midi
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.normpath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-SF2_PATH = os.path.join(BASE_DIR, ".venv", "Lib", "site-packages", "pretty_midi", "TimGM6mb.sf2")
+SF2_PATH = os.path.normpath(os.path.join(os.path.dirname(pretty_midi.__file__), "TimGM6mb.sf2"))
 
-client = genai.Client(api_key=GEMINI_API_KEY)

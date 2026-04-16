@@ -44,29 +44,35 @@ sequenceDiagram
         Exec-->>Gen: Throw Exception
         Gen->>Gen: Self-Correction Retry (Feed traceback)
         Gen->>Exec: execute corrected code
+        
+        alt Second Error
+            Exec-->>Gen: Throw Exception
+            Gen->>Gen: Second Self-Correction Retry
+            Gen->>Exec: execute corrected code
+        end
     end
     Exec-->>Gen: Return generated 'result' object
     
     Gen->>Gen: Validate & Write object to output.mid
     Gen-->>API: Return JSON (Brief, Code, /download/midi URL)
-    API-->>Client: Display Code & load MIDI player
+    API-->>Client: Display Code & trigger audio render
     
-    Client->>API: GET /download/audio?format=mp3
+    Client-->>API: GET /download/audio?format=mp3 (Background)
     API->>Audio: render_midi_to_audio()
     Audio->>Audio: Process via musicpy.daw + Soundfont (.sf2)
     Audio-->>API: Return BytesIO Stream
-    API-->>Client: Stream MP3/WAV file download
+    API-->>Client: Stream MP3/WAV file for audio player
 ```
 
 ### Step-by-Step Execution Breakdown
 
 1. **Input Collection:** The frontend (`static/script.js`) collates the user's text prompt along with tags like genre, tempo, instruments, key, and mood into a JSON payload and makes a request to the `/generate` endpoint.
-2. **Translation & Expansion:** The `gemini_service.py` receives the payload. It uses a structured system prompt to form a "Musical Brief"—a detailed blueprint specifying measure counts, motifs, harmony, and instrument behaviors.
-3. **Code Generation / Retrieval:** If the user has selected a Prepackaged Example from the UI, the system short-circuits the LLM and instantly retrieves the predefined brief and code from `prepackaged.py`. For custom prompts, the brief is translated into explicit `musicpy` Python code by the LLM pipeline.
+2. **Translation & Expansion:** The `gemini_service.py` receives the payload. It uses a structured system prompt to form a "Musical Brief"—a detailed blueprint specifying measure counts, motifs, harmony, and instrument behaviors. It explicitly injects native `pretty_midi` General MIDI mappings into the prompt to ensure instruments requested by the user are grounded in real, addressable synthesizer mapping.
+3. **Code Generation / Retrieval:** If the user has selected a Prepackaged Example from the UI, the system short-circuits the LLM and instantly retrieves the predefined brief and code from `prepackaged.py`. For custom prompts, the brief is translated into explicit `musicpy` Python code by the LLM pipeline. The code generator receives the raw HTML documentation of `musicpy` injected directly into its system prompt as a cheat sheet, effectively eliminating syntax hallucination.
 4. **Dynamic Execution:** Using an isolated `exec()` environment, the generated Python string is run on the server. This explicitly constructs chords, scales, patterns, and tracks, mapping them to standard GM instrument integers. 
-5. **Retry Mechanism:** Because code generation can occasionally produce syntax errors or unsupported concatenations, the execution block intercepts exceptions. If a `ValueError` or `SyntaxError` throws from the Python execution, the traceback is passed back to the translation layer for one immediate self-correction attempt.
+5. **Retry Mechanism:** Because code generation can occasionally produce syntax errors or unsupported concatenations, the execution block intercepts exceptions. If a `ValueError` or `SyntaxError` throws from the Python execution, the traceback is passed back to the translation layer for self-correction. The system attempts 1 initial generation (via a larger model) and affords up to 2 subsequent fix retries (using a faster, lower-temperature model) to repair the Python code.
 6. **MIDI Writing:** Once execution succeeds, the generated `result` object is validated and saved as `output.mid`. The frontend receives the brief, the code, and a URL to fetch the MIDI.
-7. **DAW Audio Rendering:** When the user decides to download or preview the audio offline, the `/download/audio` endpoint invokes `audio_service.py`. The `musicpy.daw` module reads the generated MIDI file and renders it against a defined SoundFont (`.sf2`), exporting the final high-quality buffer stream directly back to the client.
+7. **DAW Audio Rendering:** Upon receiving the successful generation payload, the frontend background-fetches the `/download/audio` endpoint which invokes `audio_service.py`. The `musicpy.daw` module reads the generated MIDI file and renders it against a defined SoundFont (`.sf2`), exporting a high-quality buffer stream directly back to the client for immediate playback via an HTML5 Audio Player.
 
 ## Codebase Structure
 
@@ -78,6 +84,7 @@ STALGIA/
 │   ├── config.py               # Environmental variables, models, and SF2 pathing.
 │   ├── examples/               # Prepackaged verified generated examples.
 │   │   ├── __init__.py
+│   │   ├── cheat-sheet.html    # Raw HTML documentation of musicpy for prompt injection.
 │   │   └── prepackaged.py      # Hardcoded examples and their matching outputs.
 │   ├── prompts/                # Core System Prompts indicating rules and syntax.
 │   ├── routes/api.py           # Flask Blueprint exposing endpoints.
@@ -85,11 +92,15 @@ STALGIA/
 │   │   ├── gemini_service.py   # Translation Pipeline, Code Gen, and Execution handling.
 │   │   └── audio_service.py    # Processes MIDI into MP3/WAV using `daw.export`.
 ├── docs/                       # Project documentation.
+│   ├── api_reference.md        # Available REST endpoints and request/response shapes.
+│   ├── architecture.md         # Two-stage generation pipeline and codebase layout.
+│   ├── building_with_musicpy.md # How Musicpy syntax works and prompt injection strategies.
+│   ├── getting_started.md      # Installation and execution instructions.
+│   └── README.md               # Documentation landing page.
 ├── static/                     # Frontend web elements (HTML, CSS, JS).
 ├── tags/                       # JSON lists populating UI selection options.
 ├── tests/                      # Testing suite for API and generation features.
-├── requirements.txt            # Python dependencies.
-└── README.md                   # Documentation landing page.
+└── requirements.txt            # Python dependencies.
 ```
 
 

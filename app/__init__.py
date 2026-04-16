@@ -5,7 +5,7 @@ import os
 from .config import BASE_DIR
 
 def create_app():
-    app = Flask(__name__, static_folder=os.path.join(BASE_DIR, 'static'))
+    app = Flask(__name__, static_folder=os.path.join(BASE_DIR, 'static'), static_url_path='')
     CORS(app)
     
     # Initialize Swagger UI
@@ -13,12 +13,16 @@ def create_app():
         "info": {
             "title": "STALGIA API",
             "description": "API for STALGIA music generation using musicpy and Gemini API.",
-            "version": "1.0.0"
+            "version": "1.2.0"
         }
     })
 
     # Register blueprints
     from .routes.api import api_bp
     app.register_blueprint(api_bp)
+
+    @app.route('/')
+    def index():
+        return app.send_static_file('index.html')
 
     return app

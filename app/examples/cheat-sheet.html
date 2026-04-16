@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Musicpy Quickstart and Cheat Sheet - musicpy documentation</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header class="col-md-12"></header>
+<h1 id="musicpy-quickstart-and-cheat-sheet">Musicpy Quickstart and Cheat Sheet</h1>
+<p>This is a chapter for a quickstart and cheat sheet for musicpy, in case you find the documentation are too long and complicated to read and hard to find what you want.</p>
+<h1 id="cheat-sheet">Cheat Sheet</h1>
+<p>(in case you import musicpy as <code>from musicpy import *</code>)</p>
+<p>Note1: the chord type of muscipy has a <code>interval</code> attribute which is the list of the length of bars between the starts of each 2 adjacent notes of the chord, please don't confuse this with the music theory's interval which is a difference in pitch between 2 notes (e.g. major third, semitone). In the cheat sheet we'll use <code>music intervals</code> to denote the music theory's interval.</p>
+<p>Note2: the default indexing is 0-based for all functions unless 1-based is mentioned.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">functionality</th>
+<th style="text-align: center;">syntax (recommended)</th>
+<th style="text-align: center;">alternatives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">construct a note C5</td>
+<td style="text-align: center;">N('C5')</td>
+<td style="text-align: center;">N('c5');  note('C', 5)</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a chord Cmaj7</td>
+<td style="text-align: center;">C('Cmaj7')</td>
+<td style="text-align: center;">get_chord('C', 'maj7')</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a chord Cmaj7 with starting note C5</td>
+<td style="text-align: center;">C('C5:maj7')</td>
+<td style="text-align: center;">C('Cmaj7', pitch=5);<br/>get_chord('C', 'maj7', pitch=5)</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a chord with notes C5, E5, G6</td>
+<td style="text-align: center;">chord('C5, E5, G6')</td>
+<td style="text-align: center;">chord('c5, e5, g6');<br/>chord(['C5', 'E5', 'G6']);<br/>chord(['c5', 'e5', 'g6']);<br/>chord([N('C5'), N('E5'), N('G6')])</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a C major scale</td>
+<td style="text-align: center;">S('C major')</td>
+<td style="text-align: center;">scale('C', 'major')</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a piece</td>
+<td style="text-align: center;">build(track(content=C('C'), instrument=1, start_time=0),<br/>track(content=C('D'), instrument=47, start_time=1), bpm=150)</td>
+<td style="text-align: center;">P(tracks=[C('C'), C('D')],<br/>instruments=[1, 47],<br/>start_times=[0, 1],<br/>bpm=150)</td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a track</td>
+<td style="text-align: center;">track(content=C('C'), instrument=1, start_time=0)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a set of drum beats</td>
+<td style="text-align: center;">drum('K, H, H, K, S, H, H, H, t:1')</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">transpose a chord/note A up/down n semitones</td>
+<td style="text-align: center;">A + n; A - n</td>
+<td style="text-align: center;">A.up(n); A.down(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower ith note of chord A n semitones</td>
+<td style="text-align: center;">A + (n, i); A - (n, i)</td>
+<td style="text-align: center;">A.up(n, i); A.down(n, i)</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower ith to jth notes of chord A n semitones</td>
+<td style="text-align: center;">A + (n, i, j); A - (n, i, j)</td>
+<td style="text-align: center;">A.up(n, i, j); A.down(n, i, j)</td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate chord A and chord B</td>
+<td style="text-align: center;">A | B</td>
+<td style="text-align: center;">A + B</td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate chord B after chord A with n bars interval</td>
+<td style="text-align: center;">A | (B, n)</td>
+<td style="text-align: center;">A + (B, n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">add rest of n bars to chord A</td>
+<td style="text-align: center;">A | n</td>
+<td style="text-align: center;">A.rest(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate chord A n times with interval i bars each time</td>
+<td style="text-align: center;">A | (n, i)</td>
+<td style="text-align: center;">A * (n, i)</td>
+</tr>
+<tr>
+<td style="text-align: center;">stack chord A and B</td>
+<td style="text-align: center;">A &amp; B</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stack chord B n bars after chord A</td>
+<td style="text-align: center;">A &amp; (B, n)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stack chord A n times</td>
+<td style="text-align: center;">A &amp; n</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stack chord A n times with interval i bars each time</td>
+<td style="text-align: center;">A &amp; (n, i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">repeat chord A n times</td>
+<td style="text-align: center;">A * n</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith note of chord A</td>
+<td style="text-align: center;">A[i]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith to jth notes of chord A</td>
+<td style="text-align: center;">A[i:j]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">set ith note of chord A to j</td>
+<td style="text-align: center;">A[i] = j</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the number of notes of chord A</td>
+<td style="text-align: center;">len(A)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the reverse of chord A</td>
+<td style="text-align: center;">~A</td>
+<td style="text-align: center;">A.reverse()</td>
+</tr>
+<tr>
+<td style="text-align: center;">transpose chord/note A up 1 semitone</td>
+<td style="text-align: center;">+A</td>
+<td style="text-align: center;">A.up()</td>
+</tr>
+<tr>
+<td style="text-align: center;">transpose chord/note A down 1 semitone</td>
+<td style="text-align: center;">-A</td>
+<td style="text-align: center;">A.down()</td>
+</tr>
+<tr>
+<td style="text-align: center;">set duration, interval and volume of chord A and return a new chord A</td>
+<td style="text-align: center;">A % (duration, interval, volume)</td>
+<td style="text-align: center;">A.set(duration, interval, volume)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get the nth inversion of chord A</td>
+<td style="text-align: center;">A / n</td>
+<td style="text-align: center;">A.inversion(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">invert the nth note of chord A to the highest</td>
+<td style="text-align: center;">A ^ n</td>
+<td style="text-align: center;">A / -n; A.inversion_highest(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">invert the nth note of chord A to the lowest</td>
+<td style="text-align: center;">A @ n</td>
+<td style="text-align: center;">A.inv(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">form a new chord from the notes of chord A by index (1-based)</td>
+<td style="text-align: center;">A @ [1, 2, 3, 2, 1.1, 2, 3, 2]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">form a new chord from the notes of chord A by index (1-based), increased octaves</td>
+<td style="text-align: center;">A / [1, 2, 4, 3]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">modulate chord A from scale i to scale j</td>
+<td style="text-align: center;">A.modulation(i, j)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">delete ith note of chord A</td>
+<td style="text-align: center;">del A[i]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">append note i to chord A with interval j and return a new chord A</td>
+<td style="text-align: center;">A + i</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">append note i to chord A with interval j</td>
+<td style="text-align: center;">A.append(i, j)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">remove note i from chord A and return a new chord A</td>
+<td style="text-align: center;">A - i</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">remove note i from chord A</td>
+<td style="text-align: center;">A.remove(i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">pop ith note from chord A</td>
+<td style="text-align: center;">A.pop(i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">insert note j at index i with interval k to chord A</td>
+<td style="text-align: center;">A.insert(i, j, interval=k)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">drop n voicing of chord A</td>
+<td style="text-align: center;">A.drops(n)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">negative harmony of chord A at scale B</td>
+<td style="text-align: center;">A @ B</td>
+<td style="text-align: center;">A.negative_harmony(B)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get chord A from ith bars to jth bars (0-based)</td>
+<td style="text-align: center;">A.cut(i, j)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get a new chord based on changing chord A's notes</td>
+<td style="text-align: center;">A('omit 3, b9')</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the total length in bars of chord A</td>
+<td style="text-align: center;">A.bars()</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get durations of notes of chord A</td>
+<td style="text-align: center;">A.get_duration()</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get intervals of notes of chord A</td>
+<td style="text-align: center;">A.interval</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">set duration, volume and channel of note A</td>
+<td style="text-align: center;">A % (duration, volume, channel)</td>
+<td style="text-align: center;">A.set(duration, volume, channel)</td>
+</tr>
+<tr>
+<td style="text-align: center;">change the accidentals of note A (# to b, b to #) and return a new note</td>
+<td style="text-align: center;">~A</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get dotted note of note A with n dots</td>
+<td style="text-align: center;">A.dotted(n)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get duration of note A</td>
+<td style="text-align: center;">A.duration</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower scale A n semitones</td>
+<td style="text-align: center;">A + n; A - n</td>
+<td style="text-align: center;">A.up(n); A.down(n)</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower ith note of scale A n semitones</td>
+<td style="text-align: center;">A + (n, i); A - (n, i)</td>
+<td style="text-align: center;">A.up(n, i); A.down(n, i)</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower ith to jth notes of scale A n semitones</td>
+<td style="text-align: center;">A + (n, i, j); A - (n, i, j)</td>
+<td style="text-align: center;">A.up(n, i, j); A.down(n, i, j)</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower scale A 1 semitone</td>
+<td style="text-align: center;">+A; -A</td>
+<td style="text-align: center;">A.up(); A.down()</td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith degree of scale A</td>
+<td style="text-align: center;">A[i]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith degree of scale A (1-based)</td>
+<td style="text-align: center;">A.get_degree(i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith triad of scale A</td>
+<td style="text-align: center;">A(i)</td>
+<td style="text-align: center;">A.pick_chord_by_degree(i)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith 7th chord of scale A</td>
+<td style="text-align: center;">A(i, num=4)</td>
+<td style="text-align: center;">A.pick_chord_by_degree(i, num=4)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith mode of scale A (1-based)</td>
+<td style="text-align: center;">A / i</td>
+<td style="text-align: center;">A.inversion(i)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get chord with notes from scale A by index</td>
+<td style="text-align: center;">A @ [0, 2, 4]</td>
+<td style="text-align: center;">A.pick_chord_by_index([0, 2, 4])</td>
+</tr>
+<tr>
+<td style="text-align: center;">get the reversed scale of scale A</td>
+<td style="text-align: center;">~A</td>
+<td style="text-align: center;">A.reverse()</td>
+</tr>
+<tr>
+<td style="text-align: center;">get a chord progression with degrees of scale A (1-based)</td>
+<td style="text-align: center;">A % 6451</td>
+<td style="text-align: center;">A.pattern(6451)</td>
+</tr>
+<tr>
+<td style="text-align: center;">get ith track of piece A</td>
+<td style="text-align: center;">A[i]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get chord type of ith track of piece A</td>
+<td style="text-align: center;">A(i)</td>
+<td style="text-align: center;">A.tracks[i]</td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower piece A n semitones</td>
+<td style="text-align: center;">A + n; A - n</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">raise/lower ith track of piece A n semitones</td>
+<td style="text-align: center;">A[i] += n; A[i] -= n</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">repeat piece A n times</td>
+<td style="text-align: center;">A * n</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate piece A and piece B</td>
+<td style="text-align: center;">A + B</td>
+<td style="text-align: center;">A | B</td>
+</tr>
+<tr>
+<td style="text-align: center;">stack piece A and piece B</td>
+<td style="text-align: center;">A &amp; B</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">delete ith track of piece A</td>
+<td style="text-align: center;">del A[i]</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the reverse of piece A</td>
+<td style="text-align: center;">~A</td>
+<td style="text-align: center;">A.reverse()</td>
+</tr>
+<tr>
+<td style="text-align: center;">get the number of tracks of piece A</td>
+<td style="text-align: center;">len(A)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">append a new track n to piece A</td>
+<td style="text-align: center;">A.append(n)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">insert a new track n at index i to piece A</td>
+<td style="text-align: center;">A.insert(i, n)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the total length in bars of piece A</td>
+<td style="text-align: center;">A.bars()</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">read a MIDI file into piece type</td>
+<td style="text-align: center;">read(path)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">write a note/chord/piece/track/drum type A to a MIDI file</td>
+<td style="text-align: center;">write(A)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">play a note/chord/piece/track/drum type A at bpm 100</td>
+<td style="text-align: center;">play(A, bpm=100)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stop playing</td>
+<td style="text-align: center;">stopall()</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate a list of chords [A, B, C]</td>
+<td style="text-align: center;">concat([A, B, C])</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">concatenate a list of chords [A, B, C] with extra interval i</td>
+<td style="text-align: center;">concat([A, B, C], extra=i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stack a list of chords [A, B, C]</td>
+<td style="text-align: center;">concat([A, B, C], mode='&amp;')</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">stack a list of chords [A, B, C] with extra interval i</td>
+<td style="text-align: center;">concat([A, B, C], mode='&amp;', extra=i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get note from MIDI degree i</td>
+<td style="text-align: center;">degree_to_note(i)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the degree (MIDI note number) of note A</td>
+<td style="text-align: center;">A.degree</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the note name of note A</td>
+<td style="text-align: center;">A.name</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the octave number of note A</td>
+<td style="text-align: center;">A.num</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">get the music intervals of chord A</td>
+<td style="text-align: center;">A.intervalof()</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a tempo change instance with bpm 150 and start time at 0</td>
+<td style="text-align: center;">tempo(150, start_time=0)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a pitch_bend instance with value of 100 cents and start time at 0</td>
+<td style="text-align: center;">pitch_bend(100, start_time=0)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a pan instance with value of 100% and start time at 0</td>
+<td style="text-align: center;">pan(100, start_time=0)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a volume instance with value of 100% and start time at 0</td>
+<td style="text-align: center;">volume(100, start_time=0)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">construct a rhythm instance</td>
+<td style="text-align: center;">rhythm('b b 0 0 b 0 b 0', 1)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">generate chords from rhythm</td>
+<td style="text-align: center;">get_chords_from_rhythm(C('C'), rhythm('b b 0 0 b 0 b 0', 1))</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">generate arpeggios of a chord between 2 octaves</td>
+<td style="text-align: center;">arp(C('Cmaj7'), 3, 7)</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        

@@ -2,7 +2,7 @@
 
 <img src="../static/logo.png" alt="STALGIA Logo">
 
-</div
+</div>
 
 ---
 
@@ -14,7 +14,7 @@ The backend uses a standard REST framework. Endpoints handle data queries, promp
 
 ## Get Tags (`/tags`)
 
-Fetches JSON files from the `tags/` directory to populate frontend selection categories.
+Fetches JSON files from the `tags/` directory to populate frontend selection categories, except for instruments. The `instruments` array returned by this endpoint is sourced dynamically and authoritatively from the built-in `pretty_midi.constants.INSTRUMENT_MAP` and `DRUM_MAP` dictionaries.
 
 **HTTP Query**
 ```http
@@ -75,7 +75,7 @@ Content-Type: application/json
 **Failure Response (500 Error)**
 ```json
 {
-  "error": "Failed after 2 attempts. Last error: ...",
+  "error": "Failed after 3 attempts. Last error: ...",
   "code": "from musicpy import *\n..."
 }
 ```

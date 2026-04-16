@@ -3,6 +3,7 @@ import json
 import traceback
 from flasgger import swag_from
 from flask import Blueprint, request, jsonify, send_file
+from pretty_midi.constants import INSTRUMENT_MAP, DRUM_MAP
 from app.services.gemini_service import generate_music
 from app.services.audio_service import render_midi_to_audio
 from app.config import BASE_DIR
@@ -108,6 +109,11 @@ def get_tags():
                         tags[key] = json.load(f)
                     except json.JSONDecodeError:
                         pass
+
+    # Use pretty_midi's built-in General MIDI maps as the authoritative
+    # instrument vocabulary used by the MIDI conversion stack.
+    tags['instruments'] = list(INSTRUMENT_MAP) + list(DRUM_MAP)
+
     return jsonify(tags)
 
 @api_bp.route('/download/midi', methods=['GET'])

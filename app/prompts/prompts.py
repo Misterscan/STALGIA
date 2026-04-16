@@ -1,3 +1,11 @@
+import os
+from app.config import BASE_DIR
+from app.examples.prepackaged import PREPACKAGED_EXAMPLES
+
+def get_prepackaged_examples():
+    return PREPACKAGED_EXAMPLES
+
+
 def build_generation_prompt(user_prompt, config):
     if not config:
         return user_prompt
@@ -114,38 +122,68 @@ Follow these syntax rules based squarely on the official musicpy documentation:
 3. Rhythm formatting: Use lists or fractions for duration/intervals via the `%` operator. 
    - E.g. `c = C('Cmaj7', 4) % (1/2, 1/8)` (same rhythm for all notes)
    - E.g. `melody = chord('C5, D5') % ([1/4, 1/8], [0, 0])` (varying rhythms)
-4. Drum tracks: Create drums using `drum('K, H, S, H')` (K=Kick, H=Hi-hat, S=Snare, -=rest). Do NOT pass `instrument` to `drum()`! 
-   - CRITICAL: Never concatenate `rest()` with `drum()` (e.g. `rest(4) | drum(...)` will crash). Just build out exact drum lengths using empty beats (`-`) or scale the drum pattern to fit the section.
-5. Tracks: Wrap your chords/drums in a `track` object: `t1 = track(my_chord, instrument=1, start_time=8)` (pass the GM instrument integer here, and use `start_time` in bars to place sections later in the song).
-   - CRITICAL: For drums, you MUST pass `.notes`, e.g. `t2 = track(drum_pattern.notes, channel=9)`.
+4. Drum tracks: You may use the `drum('K, H, S, H')` function (K=Kick, H=Hi-hat, S=Snare, -=rest), but you MUST IMMEDIATELY append `.notes` to convert it into a standard `chord`! Do NOT leave it as a `drum` object, or concatenation and track operations will fatally crash!
+   - Correct: `kick_snare = drum('K, -, S, -').notes` (Now it's a safe `chord` object!)
+   - You can also manually build drum patterns using standard `chord()` objects mapped to channel 9. Use the corresponding note string from the Drum Map (e.g. `chord('C2')` for Kick, `chord('E2')` for Snare).
+5. Tracks: Wrap your assemblies in a `track` object: `t1 = track(my_chord, instrument=1, start_time=8)` (pass the GM instrument integer here, and use `start_time` in bars to place it later in the song).
+   - CRITICAL Limit Workaround: MIDI only supports 16 channels. You must manually assign `channel=X` if you use more than 15 total `track` objects. Assign the same `channel` (e.g. `channel=0`) to all tracks sharing the same `instrument`.
+   - CRITICAL: For drums, just pass the assembled notes into `track(..., channel=9)`. Ensure everything you pass is a `chord` object (whether built manually or via `drum(...).notes`).
 6. Piece Combine tracks into a piece using `build(t1, t2, bpm=120)`. 
    - CRITICAL: Use `build(t1, t2)` instead of `piece(tracks=[t1, t2])` when using `track` objects.
 7. You MUST define a variable named `result` containing the final piece/track/chord object.
 8. Do NOT include any code that saves files or plays sounds (like `write` or `play`).
-9. Structure your songs! Use the `|` operator to concatenate different sections (e.g., Intro, Verse, Chorus) to make a complete, structured piece rather than just a 4-bar loop. You can repeat sections using `*` (e.g., `verse_chords * 4 | chorus_chords * 4`).
-10. Keep the full arrangement aligned to the requested total length. If a part is silent in a section, you may use one exact rest for that section or place later material with `start_time`.
+9. Structure your songs logically! Use the `|` operator to concatenate different sections or chord progressions, and use the `*` operator to repeat them to fill out the timeline.
+10. Keep the full arrangement aligned to the requested total length conceptually.
 11. Be careful with chord duration math: for multi-note chords like `C('Fm7', 4)`, `% (1, 1)` makes the whole event span 4 bars because the duration applies across the chord tones. For a one-bar chord hit, use `% (1/4, 1/4)` instead.
-12. NEVER multiply `rest()` or concatenate one `rest()` directly with another `rest()`. If you need long silence, write one exact rest for that section or use `start_time`.
+12. NEVER multiply `rest()` or concatenate one `rest()` directly with another `rest()`. Use `rest(total_bars)` for continuous silence if needed.
 13. For one-bar chord blocks, prefer stable forms like `C('C#m', 4) % (1, 0)` or `chord('C#4,E4,G#4') % (1, 0)`.
-14. Before finishing, make sure the final piece reaches the brief's total bars and sounds like a complete song, not just a short section sketch.
-
-Example of a complete valid generation:
-```python
-from musicpy import *
-
-# 1. Reusable section phrases
-intro_chords = (C('Cmaj7', 4) % (1, 0)) | (C('Am7', 4) % (1, 0)) | (C('Fmaj7', 4) % (1, 0)) | (C('G', 4) % (1, 0))
-hook_chords = intro_chords * 2
-hook_lead = (chord('C5') % ([1], [1])) | (chord('E5') % ([1], [1])) | (chord('G5') % ([1], [1])) | (chord('E5') % ([1], [1]))
-hook_drums = (drum('K, H, S, H') * 8).notes
-
-# 2. Place sections with explicit start_time values in bars
-piano_intro_track = track(intro_chords, instrument=1, start_time=0)
-piano_hook_track = track(hook_chords, instrument=1, start_time=4)
-lead_hook_track = track(hook_lead, instrument=81, start_time=4)
-drum_hook_track = track(hook_drums, channel=9, start_time=4)
-
-# 3. Combine into piece using build()
-result = build(piano_intro_track, piano_hook_track, lead_hook_track, drum_hook_track, bpm=110)
-```
+14. CRITICAL: NEVER use the `arp` or `arpeggio` functions. They are highly unstable and will cause `TypeError`. To generate arpeggiated patterns, use the `%` modulo operator on a chord, for example: `my_arp = C('Cmaj7', 4) % (1/8, 1/8)`.
+15. Before finishing, make sure the final piece reaches the brief's total bars and sounds like a complete song, not just a short section sketch.
+16. Do NOT define helper functions (`def your_func:`). Apply all rhythm transformations and scaling directly inline inside the main execution scope using simple variables or loops.
+17. Refer STRICTLY to the PREPACKAGED EXAMPLES section below for the absolute source of truth on how your final code should be structured, especially regarding `track` initialization, looping, and alignment!
 """
+
+from pretty_midi.constants import INSTRUMENT_MAP, DRUM_MAP
+import musicpy as mp
+
+instrument_map_str = "\n".join([f"GM {i+1}: {name}" for i, name in enumerate(INSTRUMENT_MAP)])
+drum_map_str = "\n".join([f"Note {i+35} ({mp.degree_to_note(i+35)}): {name}" for i, name in enumerate(DRUM_MAP)])
+
+GM_REFERENCE = f"""
+### GENERAL MIDI REFERENCE ###
+Instrument Map (use these GM integers for instrument=X):
+{instrument_map_str}
+
+Drum Map (use these notes in your drum patterns):
+{drum_map_str}
+"""
+
+try:
+    cheat_sheet_path = os.path.join(BASE_DIR, "app", "examples", "cheat-sheet.html")
+    with open(cheat_sheet_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+    
+    MUSICPY_CHEAT_SHEET = f"""
+### FULL MUSICPY DOCUMENTATION CHEAT SHEET ###
+The following is the raw HTML documentation cheat sheet for musicpy. Use this as your reference for core API operations:
+{html_content}
+"""
+except Exception:
+    MUSICPY_CHEAT_SHEET = "Error loading cheat sheet."
+
+STAGE1_PROMPT += GM_REFERENCE
+STAGE2_PROMPT += GM_REFERENCE
+
+STAGE1_PROMPT += MUSICPY_CHEAT_SHEET
+STAGE2_PROMPT += MUSICPY_CHEAT_SHEET
+
+# Inject the prepackaged examples into both STAGE 1 and STAGE 2 prompts
+examples_text = "\n### PREPACKAGED EXAMPLES FOR CORRECT USAGE ###\n"
+examples_text += "Refer to these examples for correct pattern structure practices, note rhythms (particularly for arpeggios), and track construction.\n\n"
+for desc, data in get_prepackaged_examples().items():
+    examples_text += f"Description: {desc}\n\n"
+    examples_text += f"-- Brief --\n{data['brief']}\n\n"
+    examples_text += f"-- Target Code --\n```python\n{data['code']}\n```\n\n"
+
+STAGE1_PROMPT += examples_text
+STAGE2_PROMPT += examples_text

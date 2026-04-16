@@ -44,12 +44,17 @@ def generate_music(user_prompt, generation_config):
     # Stage 2: Generate Code (with retry/fix logic)
     music_code = ""
     last_error = ""
-    for attempt in range(2): # 1 initial + 1 retry
+    for attempt in range(3): # 1 initial + 2 retries
         prompt = expanded_brief if attempt == 0 else f"The following musicpy code failed with error: {last_error}. Please fix it and return the full corrected code.\n\nCode:\n{music_code}"
         
+        # Use Pro for the initial generation, then switch to faster Flash Lite for syntax fixes
+        current_model = 'gemini-3.1-pro-preview' if attempt == 0 else 'gemini-3.1-flash-lite-preview'
+        current_temp = 0.3 if attempt == 0 else 0.1
+        current_thinking_config = types.ThinkingConfig(thinking_level="low") if attempt == 0 else types.ThinkingConfig(thinking_level="minimal")
+
         response2 = client.models.generate_content(
-            model='gemini-3.1-pro-preview',
-            config=types.GenerateContentConfig(system_instruction=STAGE2_PROMPT, temperature=0.3, thinking_config=types.ThinkingConfig(thinking_level="low")),
+            model=current_model,
+            config=types.GenerateContentConfig(system_instruction=STAGE2_PROMPT, temperature=current_temp, thinking_config=current_thinking_config),
             contents=[prompt]
         )
         music_code = response2.text.strip()
@@ -88,9 +93,9 @@ def generate_music(user_prompt, generation_config):
         except Exception as e:
             last_error = str(e)
             traceback.print_exc()
-            if attempt == 1:
+            if attempt == 2:
                 return {
-                    'error': f"Failed after 2 attempts. Last error: {last_error}", 
+                    'error': f"Failed after 3 attempts. Last error: {last_error}", 
                     'code': music_code
                 }
 

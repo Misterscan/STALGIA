@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultSection = document.getElementById('result-section');
     const generationWarning = document.getElementById('generation-warning');
     const briefText = document.getElementById('brief-text');
-    const midiPlayer = document.getElementById('midi-player');
-    const midiVisualizer = document.getElementById('midi-visualizer');
     const codeSection = document.getElementById('code-section');
     const codeText = document.getElementById('code-text');
     const downloadMidiBtn = document.getElementById('download-midi');
@@ -144,6 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         briefText.textContent = markdown;
     }
+    
+    // We remove the target code returned in the Musical Brief and just show the natural language description there, since the code can be very long and detailed. The user can view the full code in the Code section if they want.
+    function extractBriefDescription(briefMarkdown) {
+        const lines = briefMarkdown.split('\n');
+        const descriptionLines = [];
+        for (const line of lines) {
+            if (line.trim().startsWith('```')) break;
+            descriptionLines.push(line);
+        }
+        return descriptionLines.join('\n').trim();
+    }
 
     generateBtn.addEventListener('click', async () => {
         const prompt = promptInput.value.trim();
@@ -171,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             // Update UI with results
-            renderBriefMarkdown(data.brief);
+            renderBriefMarkdown(extractBriefDescription(data.brief));
             codeText.textContent = data.code;
 
             if (data.warning) {
@@ -182,11 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Set MIDI source
             // We append a timestamp to bust cache
             const midiUrl = `${apiBase}/download/midi?t=${Date.now()}`;
-            midiPlayer.src = midiUrl;
-            midiVisualizer.src = midiUrl;
             downloadMidiBtn.href = midiUrl;
 
-            // Show sections immediately for MIDI playback
+            // Show sections immediately for audio playback
             resultSection.classList.remove('hidden');
             codeSection.classList.remove('hidden');
             resultSection.scrollIntoView({ behavior: 'smooth' });

@@ -4,7 +4,7 @@
 
 <a href="https://github.com/Rainbow-Dreamer"><strong>Musicpy Creator on GitHub</strong></a>
 
-</div
+</div>
 
 ---
 
@@ -50,14 +50,14 @@ If you want to build your own AI-to-Code music generator, you can replicate the 
 
 ### Step 1: The NLP Translation Layer (Prompt Engineering)
 LLMs are excellent at writing Python, but `musicpy`'s syntax is highly specific. 
-- **Expand the Concept:** Have the LLM first act as a "Creative Director" mapping out the song's BPM, bar counts, and instruments.
-- **Enforce Syntax Rules:** Pass the expanded brief to a second LLM constrained by rigorous rules (e.g., "Never concatenate a drum sequence with a rest()", "Initialize chords using strings"). 
+- **Expand the Concept:** Have the LLM first act as a "Creative Director" mapping out the song's BPM, bar counts, and instruments. Directly inject the exact General MIDI instrument mappings from `pretty_midi` into this prompt to prevent instrument hallucination.
+- **Enforce Syntax Rules:** Pass the expanded brief to a second LLM layer. To guarantee success, inject the *raw HTML documentation* or cheat sheet of `musicpy` structurally into the system prompt. This drastically minimizes syntax mismatch or fallback to generic python logic.
 - **Goal:** The LLM's only job is to output a raw python string that produces a `result` variable containing the final `musicpy` arrangement.
 
 ### Step 2: Safe Code Execution & Retry Loops
 You must execute the generated Python string on your server:
 - Use Python's `exec(generated_code, global_namespace)` to compile the sequence in memory.
-- **Crucial:** LLMs will occasionally hallucinate arguments or cause `SyntaxError`s. Wrap the execution in a `try/except` block. If it fails, capture the Python traceback and send it *back* to the LLM, asking it to fix its mistake. This self-correction loop vastly increases generation success rates.
+- **Crucial:** LLMs will occasionally hallucinate arguments or cause `SyntaxError`s. Wrap the execution in a `try/except` block. If it fails, capture the Python traceback and send it *back* to the LLM, asking it to fix its mistake. Building a layered retry loop (e.g., 1 initial high-quality generation + 2 subsequent high-speed fix retries) vastly increases generation success rates.
 
 ### Step 3: MIDI Output & Audio Rendering
 Once the snippet executes successfully, you have a `musicpy` object. 
@@ -65,4 +65,4 @@ Once the snippet executes successfully, you have a `musicpy` object.
 - To produce listenable audio (MP3/WAV), utilize the `musicpy.daw` module. Load a Soundfont (`.sf2` file, like `TimGM6mb.sf2`) and map it to your tracks. Render the arrangement into a `BytesIO` buffer stream to send directly to your user's browser without saving bloated audio files to your server disk. 
 
 ### Step 4: The Frontend Experience
-Use standard HTML5 Audio components or libraries like `html-midi-player` to let users interact with the final result. Because you generated the music via code (symbolically), you can effortlessly display sheet music, piano rolls, or the exact Python code right alongside the audio track, making your product significantly more transparent and editable than black-box AI audio generators.
+Use standard HTML5 Audio components to let users interact with the final result. Because you generated the music via code (symbolically), you can effortlessly display sheet music, piano rolls, or the exact Python code right alongside the audio track, making your product significantly more transparent and editable than black-box AI audio generators.

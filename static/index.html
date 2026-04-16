@@ -21,7 +21,7 @@
         <header class="title-node">
             <h1>STALGIA</h1><!-- The name is a blend of "ST" for "Source-Target" and "ALGIA" from "nostalgia", evoking the idea of transforming musical ideas into compositions that can evoke emotions and memories. -->
             <p class="subtitle">Prompt -> Code -> Music</p>
-            <span class="version">v1.1</span>
+            <span class="version">v1.2</span>
         </header>
 
         <!-- Primary Input Node -->
@@ -51,7 +51,7 @@
                     <div class="param-cell"><label>TEMPO</label><input id="config-tempo" type="number" placeholder="AUTO"></div>
                     <div class="param-cell"><label>KEY/SCALE</label><select id="config-key"><option value="">AUTO</option></select></div>
                     <div class="param-cell full"><label>STRUCTURE</label><select id="config-structure"><option value="">AUTO</option></select></div>
-                    <div class="param-cell full"><label>INSTRUMENTS</label><select id="config-instruments" multiple></select></div>
+                    <div class="param-cell full"><label>INSTRUMENTS</label><select id="config-instruments" multiple aria-describedby="config-instruments-help"></select><p id="config-instruments-help">Ctrl/Cmd+Click to select multiple instruments</p></div>
                     <div class="param-cell full"><label>NOTES</label><textarea id="config-notes" placeholder="Keep the piano melody repetitive and melancholic, dense percussion, subtle strings, etc."></textarea></div>
                 </div>
             </details>
@@ -68,9 +68,6 @@
 
             <div class="output-module view-player">
                 <h2>Audio</h2>
-                <midi-visualizer type="piano-roll" id="midi-visualizer" src=""></midi-visualizer>
-                <midi-player id="midi-player" src="" sound-font="https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus"></midi-player>
-                
                 <div class="hq-container">
                     <p id="audio-loading-text" class="hidden-fade">Synthesizing audio...</p>
                     <audio id="audio-player" controls style="display: none;"></audio>
