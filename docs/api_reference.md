@@ -6,7 +6,7 @@
 
 </div>
 
-**Interactive API Documentation (Swagger UI)** is available natively! Run the application and navigate to `http://localhost:5001/apidocs/` in your browser to explore, test, and interact with these endpoints dynamically.
+**Interactive API Documentation (Swagger UI)** is available natively! Run the application and navigate to `http://localhost:5055/apidocs/` in your browser to explore, test, and interact with these endpoints dynamically.
 
 The backend uses a standard REST framework. Endpoints handle data queries, prompt execution, and dynamic file transmission.
 

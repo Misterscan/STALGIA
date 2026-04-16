@@ -12,3 +12,4 @@ build/
 
 main-repo/
 *.mid
+.vscode/settings.json

@@ -12,6 +12,7 @@ This guide explains how to install dependencies and run STALGIA on your local ma
 1. **Python 3.10+**: Ensure Python is installed and accessible in your system `PATH`.
 2. **FluidSynth (System Audio Library)**: REQUIRED for MIDI-to-Audio background rendering. You must install the system-level C library, not just the python package:
    - **macOS:** `brew install fluidsynth`
+     *(Note for Apple Silicon/M1+ users: Homebrew installs to `/opt/homebrew/lib`. If you run scripts outside of `app.py`, you may need to add `export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` to your `~/.zshrc` so Python can find it.)*
    - **Linux:** `sudo apt install fluidsynth`
    - **Windows:** Download the [compiled release](https://github.com/FluidSynth/fluidsynth/releases) and add the `bin` directory to your System `PATH`.
 3. **Google Gemini API Key**: Visit the [Google AI Studio](https://aistudio.google.com/) to obtain an API key for access to `gemini-3.1-pro-preview` and `gemini-3.1-flash-lite-preview`.
@@ -63,5 +64,5 @@ python app.py
 ```
 
 Wait a few seconds for the application bundle to load. Open a web browser and navigate directly to:
-- **Main App Interface**: `http://127.0.0.1:5001/` (Served dynamically by the Flask root route, no need for separate file hosting!)
-- **Interactive API Docs (Swagger)**: `http://127.0.0.1:5001/apidocs/`
+- **Main App Interface**: `http://127.0.0.1:5055/` (Served dynamically by the Flask root route, no need for separate file hosting!)
+- **Interactive API Docs (Swagger)**: `http://127.0.0.1:5055/apidocs/`

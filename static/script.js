@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const configInstruments = document.getElementById('config-instruments');
     const configNotes = document.getElementById('config-notes');
 
-    const apiBase = 'http://localhost:5001'; // Connect to local Flask server
+    const apiBase = ''; // Use relative path for local server
 
     const examples = {
         dreamy_lofi: "A chill lo-fi hip hop beat at 80 BPM. Soft, jazzy electric piano seventh chords playing a relaxed progression, layered over a slow, simple drum beat.",
