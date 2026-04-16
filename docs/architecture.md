@@ -1,10 +1,8 @@
 <div align="center">
 
-<img src="../static/logo.png" alt="STALGIA Logo">
-
-
-
 # Architecture Overview
+
+<img src="../static/logo.png" alt="STALGIA Logo">
 
 STALGIA relies on a strictly linear, request-driven data flow. When a user requests a new track, the system processes it through a series of deterministic steps, isolating prompt expansion, code interpretation, and audio rendering into dedicated modules.
 
@@ -66,13 +64,13 @@ sequenceDiagram
 
 ### Step-by-Step Execution Breakdown
 
-1. **Input Collection:** The frontend (`static/script.js`) collates the user's text prompt along with tags like genre, tempo, instruments, key, and mood into a JSON payload and makes a request to the `/generate` endpoint.
-2. **Translation & Expansion:** The `gemini_service.py` receives the payload. It uses a structured system prompt to form a "Musical Brief"—a detailed blueprint specifying measure counts, motifs, harmony, and instrument behaviors. It explicitly injects native `pretty_midi` General MIDI mappings into the prompt to ensure instruments requested by the user are grounded in real, addressable synthesizer mapping.
-3. **Code Generation / Retrieval:** If the user has selected a Prepackaged Example from the UI, the system short-circuits the LLM and instantly retrieves the predefined brief and code from `prepackaged.py`. For custom prompts, the brief is translated into explicit `musicpy` Python code by the LLM pipeline. The code generator receives the raw HTML documentation of `musicpy` injected directly into its system prompt as a cheat sheet, effectively eliminating syntax hallucination.
-4. **Dynamic Execution:** Using an isolated `exec()` environment, the generated Python string is run on the server. This explicitly constructs chords, scales, patterns, and tracks, mapping them to standard GM instrument integers. 
-5. **Retry Mechanism:** Because code generation can occasionally produce syntax errors or unsupported concatenations, the execution block intercepts exceptions. If a `ValueError` or `SyntaxError` throws from the Python execution, the traceback is passed back to the translation layer for self-correction. The system attempts 1 initial generation (via a larger model) and affords up to 2 subsequent fix retries (using a faster, lower-temperature model) to repair the Python code.
+1. **Input Collection:** The frontend (`static/script.js`) collates the user's text prompt, parsing multi-select arrays using `Ctrl/Cmd+Click` (tags like genre, tempo, instruments, key, and mood), into a JSON payload and makes a request to the `/generate` endpoint. It leverages a custom `extractBriefDescription` parser to cleanly strip out markdown code blocks for pure UI presentation.
+2. **Translation & Expansion:** The `gemini_service.py` receives the payload. It uses a structured system prompt to form a "Musical Brief"—a detailed blueprint specifying measure counts, motifs, harmony, and instrument behaviors. To ensure tag consistency, the `/tags` endpoint dynamically serves `pretty_midi.constants.INSTRUMENT_MAP` and `DRUM_MAP`, bypassing hardcoded JSON files, guaranteeing instruments requested by the user are grounded in real, addressable synthesizer mapping.
+3. **Code Generation / Retrieval:** If the user has selected a Prepackaged Example from the UI, the system short-circuits the LLM and instantly retrieves the predefined brief and code from `prepackaged.py`. For custom prompts, the brief is translated into explicit `musicpy` Python code by the LLM pipeline (`gemini-3.1-pro-preview`). The code generator receives the massive `cheat-sheet.html` injected directly into its system prompt as a primary reference, effectively eliminating syntax hallucination.
+4. **Dynamic Execution:** Using an isolated `exec()` environment, the generated Python string is run on the server. This explicitly constructs chords, scales, patterns, and tracks, mapping them to standard GM instrument integers. The backend forces standard Python modulo math to map arpeggiators and strictly forbids the usage of native `.arp()` or unstable `drum()` arrays. 
+5. **Retry Mechanism:** Because code generation can occasionally produce syntax errors or unsupported concatenations (like multiplying a `rest()` explicitly by another `rest()`), the execution block intercepts exceptions. If a `ValueError` or `SyntaxError` throws from the Python execution, the traceback is passed back to the translation layer for self-correction. The system attempts 1 initial generation via `gemini-3.1-pro-preview`, and affords up to 2 subsequent fix retries using the faster, lower-temperature `gemini-3.1-flash-lite-preview` model to repair the Python code efficiently.
 6. **MIDI Writing:** Once execution succeeds, the generated `result` object is validated and saved as `output.mid`. The frontend receives the brief, the code, and a URL to fetch the MIDI.
-7. **DAW Audio Rendering:** Upon receiving the successful generation payload, the frontend background-fetches the `/download/audio` endpoint which invokes `audio_service.py`. The `musicpy.daw` module reads the generated MIDI file and renders it against a defined SoundFont (`.sf2`), exporting a high-quality buffer stream directly back to the client for immediate playback via an HTML5 Audio Player.
+7. **DAW Audio Rendering:** Upon receiving the successful generation payload, the frontend background-fetches the `/download/audio` endpoint which invokes `audio_service.py`. The `musicpy.daw` module reads the generated MIDI file and renders it against a defined SoundFont (`.sf2` dynamically located via `pretty_midi.__file__`), exporting a high-quality buffer stream directly back to the client for immediate playback via an HTML5 `<audio>` Player.
 
 ## Codebase Structure
 

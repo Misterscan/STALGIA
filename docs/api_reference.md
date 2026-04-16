@@ -1,12 +1,10 @@
 <div align="center">
 
+# API Reference
+
 <img src="../static/logo.png" alt="STALGIA Logo">
 
 </div>
-
----
-
-# API Reference
 
 **Interactive API Documentation (Swagger UI)** is available natively! Run the application and navigate to `http://localhost:5001/apidocs/` in your browser to explore, test, and interact with these endpoints dynamically.
 
@@ -35,6 +33,13 @@ GET /tags
 ## Generate Music (`/generate`)
 
 The primary endpoint that triggers the LLM expansion and audio generation routines. Expects a JSON payload.
+
+**Generative Rules & Limitations (Enforced in Translation):**
+- **Dynamic Tagging:** Instruments are fetched exclusively from `pretty_midi.constants.INSTRUMENT_MAP` and `DRUM_MAP`.
+- **Constraint Boundaries:** Instrument bounds respect **16 total MIDI channels**, with Channel 9 reserved explicitly for percussion using General MIDI assignments.
+- **Failovers:** Triggers `gemini-3.1-flash-lite-preview` dynamically if initial `gemini-3.1-pro-preview` translation throws execution errors, maxing at 3 total attempts.
+- Syntactically, the LLM bypasses `arp()` and `arpeggio()` entirely due to execution instability, using modulus `%` stepping instead.
+- Generates inline code strictly. Helper functions (`def func:`) are restricted.
 
 **Example Query: Custom Generation**
 ```http

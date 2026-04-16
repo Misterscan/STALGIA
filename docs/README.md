@@ -2,7 +2,6 @@
 
 # STALGIA
 
-
 <img src="../static/logo.png" alt="STALGIA Logo">
 
 **STALGIA** is a musical environment that translates conversational prompts into fully-fledged, executable Python code using the [`musicpy`](https://github.com/Rainbow-Dreamer/musicpy) library. Rather than generating raw audio from a black box, STALGIA relies purely on Python code to sequence notes, chords, and rhythms, turning your specifications into high-quality MIDI and audio files.
@@ -15,8 +14,9 @@
 - **Natural Language Translation:** Employs a dual-stage NLP process to expand high-level descriptions into a musical brief and reliably translate them into executable Python code.
 - **Pre-packaged Examples:** Includes a fast-path mechanism to instantly bypass LLM generation and serve guaranteed-quality base code blocks when a user selects a preset example from the frontend.
 - **Configurable Attributes:** Provide genre, tempo, instruments, key, and mood for precise structural control over the generated composition.
+- **Syntactic Robustness:** The backend translator explicitly limits the LLM's usage of crash-inducing `musicpy` edge cases (e.g., prohibiting `.arp()`, manually bounding the 16-channel MIDI limit, enforcing `.notes` conversion on drum maps, and avoiding raw `rest` multiplication).
 - **Modular Pipeline:** Extensible Flask application featuring independent APIs and separated concerns.
-- **DAW Rendering:** In-memory sequence rendering from Python code straight into MP3, WAV, or MIDI formats using a multi-channel SF2 soundfont setup.
+- **DAW Rendering:** In-memory sequence rendering from Python code straight into MP3, WAV, or MIDI formats using a dynamic multi-channel SF2 soundfont (`pretty_midi`), returning background-rendered audio streams instantly to the UI's HTML5 Audio elements.
 
 ## Documentation Index
 

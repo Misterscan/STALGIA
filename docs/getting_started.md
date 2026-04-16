@@ -1,10 +1,7 @@
 <div align="center">
 
-# Welcome to STALGIA
-
-<img src="../static/logo.png" alt="STALGIA Logo">
-
 # Getting Started
+<img src="../static/logo.png" alt="STALGIA Logo">
 
 This guide explains how to install dependencies and run STALGIA on your local machine.
 
@@ -45,8 +42,7 @@ Set the `GEMINI_API_KEY` system environment variable before starting the app.
   ```
 
 **Soundfont Note:**
-The audio export mechanism relies on an `.sf2` soundfont provided by `pretty_midi`. The default config searches for it within the local site-packages:
-`.venv/Lib/site-packages/pretty_midi/TimGM6mb.sf2`
+The audio export mechanism relies on an `.sf2` soundfont provided by `pretty_midi`. The system automatically resolves its dynamic path (e.g. `pretty_midi/TimGM6mb.sf2`) directly from the installed package.
 
 ## Running the Application
 
@@ -56,6 +52,6 @@ Start the Flask development server from the root directory:
 python app.py
 ```
 
-Open a web browser and navigate to:
-- **Main App Interface**: `http://127.0.0.1:5001/`
+Wait a few seconds for the application bundle to load. Open a web browser and navigate directly to:
+- **Main App Interface**: `http://127.0.0.1:5001/` (Served dynamically by the Flask root route, no need for separate file hosting!)
 - **Interactive API Docs (Swagger)**: `http://127.0.0.1:5001/apidocs/`

@@ -1,5 +1,7 @@
 <div align="center">
 
+# Building with Musicpy
+
 <img src="../static/logo.png" alt="STALGIA Logo"><img src="https://avatars.githubusercontent.com/u/59408627?v=4"  width="150" height="150" alt="Musicpy Creator">
 
 <a href="https://github.com/Rainbow-Dreamer"><strong>Musicpy Creator on GitHub</strong></a>
@@ -7,8 +9,6 @@
 </div>
 
 ---
-
-# Building with Musicpy
 
 STALGIA relies on the **[musicpy](https://github.com/Rainbow-Dreamer/musicpy)** library to bridge the gap between concept and audio. If you're interested in how the underlying music generation works, or if you want to build your own text-to-music platform, understanding `musicpy` is the first and most important step.
 
@@ -26,7 +26,7 @@ To translate code into music, `musicpy` relies on a few core concepts and extens
 Everything starts with basic musical structures:
 - **Chords:** Defined easily via chord names, like `C('Cmaj7', 4)` (a C major 7th chord in the 4th octave).
 - **Melodies:** Defined by listing notes `chord('C5, D5, E5')`.
-- **Drums:** Defined using rhythmic character strings, such as `drum('K, H, S, H')` (Kick, Hi-hat, Snare, Hi-hat).
+- **Drums:** Defined using rhythmic character strings, converted into standard chords via `.notes`, such as `drum('K, H, S, H').notes` (Kick, Hi-hat, Snare, Hi-hat). This conversion is critical to avoid crashes during track operations. Alternatively, you can explicitly program drums using standard `chord()` objects mapped to General MIDI percussion notes (e.g., `chord('C2')` for Kick, `chord('D2')` for Snare) and outputting them to `channel=9`.
 
 ### 2. Time and Rhythm (The `%` Operator)
 `musicpy` uses the modulo operator (`%`) to apply durations and intervals to notes and chords. 
@@ -41,6 +41,17 @@ Python's standard operators are overridden to intuitively place music blocks tog
 
 ### 4. Tracks and Pieces
 Once you've built your sequences, you assign them to a `track()` with an explicit `start_time` (in bars) and a General MIDI `instrument` integer (e.g., `instrument=1` for Piano, `channel=9` for drums). Finally, you compile all tracks together using `build(track1, track2, bpm=120)`.
+
+---
+
+## Crucial Technical Limitations & Gotchas
+
+Through extensive testing with `musicpy` in an LLM-driven execution environment, STALGIA's backend strictly enforces several syntactic limitations to avoid backend crashes. If modifying or building upon this system, remember these rules:
+
+1. **The 16-Channel MIDI Limit:** Standard MIDI protocols only support 16 unique channels. If your codebase initializes more than 15 total `track` objects, the DAW runtime will throw an error or overwrite instruments. **Workaround:** You must explicitly share `channel=X` assignments for tracks that use the exact same `instrument`. Channel 9 is always explicitly reserved for Percussion/Drums.
+2. **Arpeggiator Instability:** Do **not** use the native `arp()` or `arpeggio()` helper functions; they are highly unstable and will consistently cause `TypeError` crashes during LLM execution logic. Instead, forcefully apply arithmetic stepping via the modulo (`%`) operator (e.g. `C('Cmaj7', 4) % (1/8, 1/8)`).
+3. **Rest Concatenation:** Never directly multiply a `rest()` object or concatenate `rest() | rest()`. This evaluates unpredictably. If you need 4 bars of silence, declare exactly `rest(4)`.
+4. **Drum Object Volatility:** As soon as you call the `drum()` primitive, append `.notes` to force it back to a standard `chord` primitive. You cannot concatenate or pipe `drum()` objects onto other sequences.
 
 ---
 
