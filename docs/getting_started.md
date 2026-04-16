@@ -10,7 +10,11 @@ This guide explains how to install dependencies and run STALGIA on your local ma
 ## Prerequisites
 
 1. **Python 3.10+**: Ensure Python is installed and accessible in your system `PATH`.
-2. **Google Gemini API Key**: Visit the [Google AI Studio](https://aistudio.google.com/) to obtain an API key for access to `gemini-3.1-pro-preview` and `gemini-3.1-flash-lite-preview`.
+2. **FluidSynth (System Audio Library)**: REQUIRED for MIDI-to-Audio background rendering. You must install the system-level C library, not just the python package:
+   - **macOS:** `brew install fluidsynth`
+   - **Linux:** `sudo apt install fluidsynth`
+   - **Windows:** Download the [compiled release](https://github.com/FluidSynth/fluidsynth/releases) and add the `bin` directory to your System `PATH`.
+3. **Google Gemini API Key**: Visit the [Google AI Studio](https://aistudio.google.com/) to obtain an API key for access to `gemini-3.1-pro-preview` and `gemini-3.1-flash-lite-preview`.
 
 ## Installation
 
@@ -20,8 +24,14 @@ This guide explains how to install dependencies and run STALGIA on your local ma
    python -m venv .venv
    ```
 3. **Activate the virtual environment:**
-   - **Windows (PowerShell):** `.\.venv\Scripts\Activate.ps1`
-   - **macOS/Linux:** `source .venv/bin/activate`
+   - **Windows (PowerShell):** 
+   ```Powershell
+   .\.venv\Scripts\Activate.ps1`
+   ```
+   - **macOS/Linux:** 
+   ```bash
+   source .venv/bin/activate
+   ```
 4. **Install Requirements:**
    ```bash
    pip install -r requirements.txt
