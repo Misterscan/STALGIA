@@ -5,3 +5,4 @@ musicpy[daw]
 google-genai
 pytest
 pretty_midi
+audioop-lts

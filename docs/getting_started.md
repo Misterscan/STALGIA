@@ -26,7 +26,7 @@ This guide explains how to install dependencies and run STALGIA on your local ma
    ```bash
    pip install -r requirements.txt
    ```
-   *Note: Ensure `musicpy`, `google-genai`, `flask`, `flask-cors`, `flasgger`, and `pretty_midi` are installed.*
+   *Note: Ensure `musicpy`, `google-genai`, `flask`, `flask-cors`, `flasgger`, `pretty_midi`, and `audioop-lts` (for Python 3.13+ compatibility) are installed.*
 
 ## Configuration
 
