@@ -69,7 +69,7 @@
             <div class="output-module view-player">
                 <h2>Audio</h2>
                 <div class="hq-container">
-                    <p id="audio-loading-text" class="hidden-fade">Synthesizing audio...</p>
+                    <p id="audio-loading-text" class="hidden-fade">Creating audio...</p>
                     <audio id="audio-player" controls style="display: none;"></audio>
                 </div>
             </div>
@@ -91,17 +91,17 @@
 
             <section id="code-section" class="output-module view-code hidden">
                 <h2>Source Code</h2>
-                <p class="code-caption">Edit the MusicPy source, render it again, or ask Gemini to adjust the current composition.</p>
+                <p class="code-caption">Edit the MusicPy source, render it again, or ask STALGIA to adjust the current composition.</p>
                 <textarea id="code-text" class="code-editor" spellcheck="false" aria-label="Editable MusicPy source code"></textarea>
                 <div class="code-actions">
-                    <button id="render-code-btn" type="button" class="secondary-action">Render Edited Code</button>
+                    <button id="render-code-btn" type="button" class="secondary-action">Run Edited Code</button>
                 </div>
-                <div class="gemini-revision-panel">
-                    <label for="revision-request">Gemini follow-up</label>
+                <div class="stalgia-revision-panel">
+                    <label for="revision-request">STALGIA follow-up</label>
                     <textarea id="revision-request" placeholder="Examples: make the melody more syncopated, switch the lead to a softer instrument, or generate a darker variation."></textarea>
                     <div class="revision-actions">
-                        <button id="revise-btn" type="button" class="secondary-action">Ask Gemini To Change Specifics</button>
-                        <button id="regenerate-btn" type="button" class="secondary-action">Ask Gemini To Regenerate</button>
+                        <button id="revise-btn" type="button" class="secondary-action">Ask STALGIA To Change Specifics</button>
+                        <button id="regenerate-btn" type="button" class="secondary-action">Ask STALGIA To Regenerate</button>
                     </div>
                 </div>
             </section>
