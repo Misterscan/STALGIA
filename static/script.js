@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const briefText = document.getElementById('brief-text');
     const codeSection = document.getElementById('code-section');
     const codeText = document.getElementById('code-text');
+    const renderCodeBtn = document.getElementById('render-code-btn');
+    const revisionRequest = document.getElementById('revision-request');
+    const reviseBtn = document.getElementById('revise-btn');
+    const regenerateBtn = document.getElementById('regenerate-btn');
     const downloadMidiBtn = document.getElementById('download-midi');
     const audioPlayer = document.getElementById('audio-player');
     const audioLoadingText = document.getElementById('audio-loading-text');
@@ -18,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const configNotes = document.getElementById('config-notes');
 
     const apiBase = ''; // Use relative path for local server
+    const generationState = {
+        prompt: '',
+        config: {},
+        brief: '',
+        code: ''
+    };
 
     const examples = {
         dreamy_lofi: "A chill lo-fi hip hop beat at 80 BPM. Soft, jazzy electric piano seventh chords playing a relaxed progression, layered over a slow, simple drum beat.",
@@ -143,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         briefText.textContent = markdown;
     }
     
-    // We remove the target code returned in the Musical Brief and just show the natural language description there, since the code can be very long and detailed. The user can view the full code in the Code section if they want.
+    // We remove the target code returned in the Musical Brief and just show the natural language description there..
     function extractBriefDescription(briefMarkdown) {
         const lines = briefMarkdown.split('\n');
         const descriptionLines = [];
@@ -154,75 +164,166 @@ document.addEventListener('DOMContentLoaded', () => {
         return descriptionLines.join('\n').trim();
     }
 
+    function setActionButtonsDisabled(disabled) {
+        [generateBtn, renderCodeBtn, reviseBtn, regenerateBtn].forEach(btn => {
+            if (btn) btn.disabled = disabled;
+        });
+    }
+
+    function showError(message) {
+        generationWarning.textContent = message;
+        generationWarning.classList.remove('hidden');
+    }
+
+    function clearWarning() {
+        generationWarning.textContent = '';
+        generationWarning.classList.add('hidden');
+    }
+
+    function updateOutputState(data, fallbackBrief = '') {
+        generationState.brief = data.brief || fallbackBrief || generationState.brief;
+        generationState.code = data.code || codeText.value;
+        renderBriefMarkdown(extractBriefDescription(generationState.brief));
+        codeText.value = generationState.code;
+
+        const midiUrl = `${apiBase}/download/midi?t=${Date.now()}`;
+        downloadMidiBtn.href = midiUrl;
+
+        resultSection.classList.remove('hidden');
+        codeSection.classList.remove('hidden');
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function refreshAudioPreview() {
+        audioPlayer.style.display = 'none';
+        audioLoadingText.style.display = 'block';
+        audioLoadingText.textContent = 'Rendering studio audio on backend. Please wait (~15 seconds)...';
+
+        try {
+            const mp3Url = `${apiBase}/download/audio?format=mp3&t=${Date.now()}`;
+            const response = await fetch(mp3Url);
+            if (!response.ok) throw new Error('Audio backend render failed');
+
+            const blob = await response.blob();
+            audioPlayer.src = window.URL.createObjectURL(blob);
+            audioLoadingText.style.display = 'none';
+            audioPlayer.style.display = 'block';
+        } catch (err) {
+            console.error(err);
+            audioLoadingText.textContent = 'Failed to render high-quality audio.';
+        }
+    }
+
+    async function performGenerationRequest(url, payload, options = {}) {
+        const { loadingText, keepVisibleBrief = '' } = options;
+
+        if (loadingText) {
+            audioPlayer.style.display = 'none';
+            audioLoadingText.style.display = 'block';
+            audioLoadingText.textContent = loadingText;
+        }
+
+        setActionButtonsDisabled(true);
+        generateBtn.classList.add('loading');
+        clearWarning();
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Request failed');
+            }
+
+            updateOutputState(data, keepVisibleBrief);
+
+            if (data.warning) {
+                showError(data.warning);
+            }
+
+            await refreshAudioPreview();
+        } catch (error) {
+            console.error(error);
+            showError(error.message || 'Something went wrong. Please check backend logs.');
+        } finally {
+            generateBtn.classList.remove('loading');
+            setActionButtonsDisabled(false);
+        }
+    }
+
     generateBtn.addEventListener('click', async () => {
         const prompt = promptInput.value.trim();
         if (!prompt) return;
         const config = collectGenerationConfig();
+        generationState.prompt = prompt;
+        generationState.config = config;
 
         // UI State: Loading
-        generateBtn.classList.add('loading');
-        generateBtn.disabled = true;
         resultSection.classList.add('hidden');
         codeSection.classList.add('hidden');
-        generationWarning.classList.add('hidden');
         if (document.getElementById('empty-state')) document.getElementById('empty-state').classList.add('hidden');
-        generationWarning.textContent = '';
 
-        try {
-            const response = await fetch(`${apiBase}/generate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt, config })
-            });
+        await performGenerationRequest(`${apiBase}/generate`, { prompt, config }, {
+            loadingText: 'Rendering studio audio on backend. Please wait (~15 seconds)...'
+        });
+    });
 
-            if (!response.ok) throw new Error('Generation failed');
-
-            const data = await response.json();
-
-            // Update UI with results
-            renderBriefMarkdown(extractBriefDescription(data.brief));
-            codeText.textContent = data.code;
-
-            if (data.warning) {
-                generationWarning.textContent = data.warning;
-                generationWarning.classList.remove('hidden');
-            }
-            
-            // Set MIDI source
-            // We append a timestamp to bust cache
-            const midiUrl = `${apiBase}/download/midi?t=${Date.now()}`;
-            downloadMidiBtn.href = midiUrl;
-
-            // Show sections immediately for audio playback
-            resultSection.classList.remove('hidden');
-            codeSection.classList.remove('hidden');
-            resultSection.scrollIntoView({ behavior: 'smooth' });
-
-            // Fetch HQ Audio in background (Takes ~15s)
-            audioPlayer.style.display = 'none';
-            audioLoadingText.style.display = 'block';
-            audioLoadingText.textContent = "Rendering studio audio on backend. Please wait (~15 seconds)...";
-            
-            const mp3Url = `${apiBase}/download/audio?format=mp3&t=${Date.now()}`;
-            fetch(mp3Url).then(res => {
-                if (!res.ok) throw new Error('Audio backend render failed');
-                return res.blob();
-            }).then(blob => {
-                audioPlayer.src = window.URL.createObjectURL(blob);
-                audioLoadingText.style.display = 'none';
-                audioPlayer.style.display = 'block';
-            }).catch(err => {
-                console.error(err);
-                audioLoadingText.textContent = "Failed to render high-quality audio.";
-            });
-
-        } catch (error) {
-            console.error(error);
-            alert('Error generating music. Please check backend logs.');
-        } finally {
-            generateBtn.classList.remove('loading');
-            generateBtn.disabled = false;
+    renderCodeBtn.addEventListener('click', async () => {
+        const editedCode = codeText.value.trim();
+        if (!editedCode) {
+            showError('MusicPy code is empty.');
+            return;
         }
+
+        generationState.code = editedCode;
+        await performGenerationRequest(`${apiBase}/render-code`, {
+            code: editedCode,
+            brief: generationState.brief
+        }, {
+            loadingText: 'Rendering updated code and rebuilding audio preview...',
+            keepVisibleBrief: generationState.brief
+        });
+    });
+
+    reviseBtn.addEventListener('click', async () => {
+        if (!generationState.prompt) {
+            showError('Generate a composition first before asking STALGIA for targeted changes.');
+            return;
+        }
+
+        await performGenerationRequest(`${apiBase}/revise`, {
+            prompt: generationState.prompt,
+            config: generationState.config,
+            brief: generationState.brief,
+            code: codeText.value,
+            request: revisionRequest.value.trim(),
+            mode: 'change'
+        }, {
+            loadingText: 'STALGIA is revising the composition and rebuilding audio...',
+            keepVisibleBrief: generationState.brief
+        });
+    });
+
+    regenerateBtn.addEventListener('click', async () => {
+        if (!generationState.prompt) {
+            showError('Create a composition first before asking STALGIA to rewrite it.');
+            return;
+        }
+
+        await performGenerationRequest(`${apiBase}/revise`, {
+            prompt: generationState.prompt,
+            config: generationState.config,
+            brief: generationState.brief,
+            code: codeText.value,
+            request: revisionRequest.value.trim(),
+            mode: 'regenerate'
+        }, {
+            loadingText: 'STALGIA is generating a fresh variation and rebuilding audio...'
+        });
     });
 
     // Handle Audio Downloads

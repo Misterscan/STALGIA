@@ -13,7 +13,7 @@ def create_app():
         "info": {
             "title": "STALGIA API",
             "description": "API for STALGIA music generation using musicpy and Gemini API.",
-            "version": "1.2.0"
+            "version": "1.3.0"
         }
     })
 

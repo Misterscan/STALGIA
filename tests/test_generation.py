@@ -7,6 +7,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.prompts.prompts import build_generation_prompt
+from app import create_app
+from app.services import gemini_service
 
 def test_musicpy_syntax_accuracy():
     """Verify that common Musicpy syntax pieces we expect AI to generate actually work."""
@@ -138,3 +140,124 @@ def test_build_generation_prompt_includes_config_fields():
 
 def test_build_generation_prompt_ignores_empty_config():
     assert build_generation_prompt('Just vibes', {}) == 'Just vibes'
+
+
+def test_render_music_code_executes_user_edits(monkeypatch, tmp_path):
+    output_file = tmp_path / 'output.mid'
+
+    def fake_write(result_obj, name='output.mid'):
+        assert result_obj is not None
+        output_file.write_bytes(b'midi')
+
+    monkeypatch.setattr(gemini_service, 'write', fake_write)
+
+    result = gemini_service.render_music_code("""
+```python
+result = chord('C4,E4,G4')
+```
+""")
+
+    assert result['midi_url'] == '/download/midi'
+    assert "result = chord('C4,E4,G4')" in result['code']
+    assert output_file.exists()
+
+
+def test_render_music_code_requires_result_variable(monkeypatch):
+    monkeypatch.setattr(gemini_service, 'write', lambda *args, **kwargs: None)
+
+    result = gemini_service.render_music_code("chord('C4,E4,G4')")
+
+    assert 'error' in result
+    assert 'result' in result['error']
+
+
+def test_render_code_route_returns_validation_error():
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post('/render-code', json={})
+
+    assert response.status_code == 400
+    assert response.get_json()['error'] == 'No code provided'
+
+
+def test_revise_route_dispatches_to_revision_service(monkeypatch):
+    app = create_app()
+    client = app.test_client()
+
+    captured = {}
+
+    def fake_revise_music(user_prompt, generation_config, current_code, current_brief, request_text='', mode='change'):
+        captured['user_prompt'] = user_prompt
+        captured['generation_config'] = generation_config
+        captured['current_code'] = current_code
+        captured['current_brief'] = current_brief
+        captured['request_text'] = request_text
+        captured['mode'] = mode
+        return {
+            'brief': current_brief,
+            'code': 'result = chord(\'D4,F#4,A4\')',
+            'midi_url': '/download/midi'
+        }
+
+    monkeypatch.setattr('app.routes.api.revise_music', fake_revise_music)
+
+    response = client.post('/revise', json={
+        'prompt': 'Make it warmer',
+        'config': {'genre': 'Ambient'},
+        'brief': 'Current brief',
+        'code': "result = chord('C4,E4,G4')",
+        'request': 'Soften the lead',
+        'mode': 'change'
+    })
+
+    assert response.status_code == 200
+    assert response.get_json()['midi_url'] == '/download/midi'
+    assert captured['user_prompt'] == 'Make it warmer'
+    assert captured['generation_config'] == {'genre': 'Ambient'}
+    assert captured['current_code'] == "result = chord('C4,E4,G4')"
+    assert captured['current_brief'] == 'Current brief'
+    assert captured['request_text'] == 'Soften the lead'
+    assert captured['mode'] == 'change'
+
+
+def test_generate_music_handles_gemini_server_errors(monkeypatch):
+    class FailingModels:
+        def generate_content(self, *args, **kwargs):
+            raise RuntimeError('500 INTERNAL')
+
+    class FailingClient:
+        models = FailingModels()
+
+    monkeypatch.setattr(gemini_service, 'client', FailingClient())
+
+    result = gemini_service.generate_music('A dark synth melody', {})
+
+    assert 'error' in result
+    assert 'Gemini prompt expansion failed' in result['error']
+    assert '500 INTERNAL' in result['error']
+
+
+def test_generate_route_handles_gemini_server_errors(monkeypatch):
+    class FailingModels:
+        def generate_content(self, *args, **kwargs):
+            raise RuntimeError('500 INTERNAL')
+
+    class FailingClient:
+        models = FailingModels()
+
+    monkeypatch.setattr(gemini_service, 'client', FailingClient())
+
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post('/generate', json={
+        'prompt': 'A dark synth melody',
+        'config': {}
+    })
+
+    assert response.status_code == 500
+    payload = response.get_json()
+    assert payload is not None
+    assert 'Gemini prompt expansion failed' in payload['error']
+    assert '500 INTERNAL' in payload['error']

@@ -64,5 +64,5 @@ python app.py
 ```
 
 Wait a few seconds for the application bundle to load. Open a web browser and navigate directly to:
-- **Main App Interface**: `http://127.0.0.1:5055/` (Served dynamically by the Flask root route, no need for separate file hosting!)
-- **Interactive API Docs (Swagger)**: `http://127.0.0.1:5055/apidocs/`
+- **Main App Interface**: `http://127.0.0.1:8080/` (Served dynamically by the Flask root route, no need for separate file hosting!)
+- **Interactive API Docs (Swagger)**: `http://127.0.0.1:8080/apidocs/`

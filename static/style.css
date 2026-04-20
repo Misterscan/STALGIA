@@ -103,6 +103,18 @@ textarea:focus, input:focus, select:focus {
     font-size: 1.1rem;
 }
 
+.code-editor,
+#revision-request {
+    min-height: 220px;
+    resize: vertical;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+#revision-request {
+    min-height: 110px;
+}
+
 /* Progressive Parameters */
 .params-disclosure {
     text-align: left;
@@ -226,6 +238,12 @@ button:disabled, .export-btn:disabled {
     margin-bottom: 1.5rem;
 }
 
+.code-caption {
+    color: var(--dim);
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
 /* Custom Elements */
 midi-visualizer {
     width: 100%;
@@ -290,6 +308,45 @@ pre {
     color: var(--dim);
 }
 
+.code-actions,
+.revision-actions {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.revision-actions {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.secondary-action {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--text);
+}
+
+.secondary-action:hover {
+    background: var(--text);
+    color: var(--bg);
+}
+
+.gemini-revision-panel {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+.gemini-revision-panel label {
+    display: block;
+    color: var(--dim);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
 .warning-msg {
     color: #ffaa00;
     border: 1px dashed #ffaa00;
@@ -314,4 +371,26 @@ p#audio-loading-text {
     font-style: italic;
     color: var(--dim);
     font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 4rem 1rem 2rem;
+    }
+
+    .prompt-header,
+    .revision-actions,
+    .export-grid,
+    .params-grid {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .prompt-header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        margin-bottom: 0;
+    }
 }

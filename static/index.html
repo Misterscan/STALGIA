@@ -21,7 +21,7 @@
         <header class="title-node">
             <h1>STALGIA</h1><!-- The name is a blend of "ST" for "Source-Target" and "ALGIA" from "nostalgia", evoking the idea of transforming musical ideas into compositions that can evoke emotions and memories. -->
             <p class="subtitle">Prompt -> Code -> Music</p>
-            <span class="version">v1.2</span>
+            <span class="version">v1.3</span>
         </header>
 
         <!-- Primary Input Node -->
@@ -91,7 +91,19 @@
 
             <section id="code-section" class="output-module view-code hidden">
                 <h2>Source Code</h2>
-                <pre><code id="code-text"></code></pre>
+                <p class="code-caption">Edit the MusicPy source, render it again, or ask Gemini to adjust the current composition.</p>
+                <textarea id="code-text" class="code-editor" spellcheck="false" aria-label="Editable MusicPy source code"></textarea>
+                <div class="code-actions">
+                    <button id="render-code-btn" type="button" class="secondary-action">Render Edited Code</button>
+                </div>
+                <div class="gemini-revision-panel">
+                    <label for="revision-request">Gemini follow-up</label>
+                    <textarea id="revision-request" placeholder="Examples: make the melody more syncopated, switch the lead to a softer instrument, or generate a darker variation."></textarea>
+                    <div class="revision-actions">
+                        <button id="revise-btn" type="button" class="secondary-action">Ask Gemini To Change Specifics</button>
+                        <button id="regenerate-btn" type="button" class="secondary-action">Ask Gemini To Regenerate</button>
+                    </div>
+                </div>
             </section>
         </section>
     </main>

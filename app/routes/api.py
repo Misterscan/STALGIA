@@ -4,7 +4,7 @@ import traceback
 from flasgger import swag_from
 from flask import Blueprint, request, jsonify, send_file
 from pretty_midi.constants import INSTRUMENT_MAP, DRUM_MAP
-from app.services.gemini_service import generate_music
+from app.services.gemini_service import generate_music, render_music_code, revise_music
 from app.services.audio_service import render_midi_to_audio
 from app.config import BASE_DIR
 
@@ -60,19 +60,147 @@ api_bp = Blueprint('api', __name__)
 })
 def generate():
     try:
-        data = request.json
+        data = request.json or {}
         user_prompt = data.get('prompt', '')
         generation_config = data.get('config', {})
+        variation_request = data.get('variation_request', '')
         if not user_prompt:
             return jsonify({'error': 'No prompt provided'}), 400
 
-        result = generate_music(user_prompt, generation_config)
+        result = generate_music(user_prompt, generation_config, variation_request=variation_request)
         
         if 'error' in result:
             return jsonify(result), 500
             
         return jsonify(result)
 
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/render-code', methods=['POST'])
+@swag_from({
+    'tags': ['Generation'],
+    'description': 'Executes user-edited musicpy code and regenerates the MIDI output.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'code': {
+                        'type': 'string',
+                        'example': "result = chord('C4,E4,G4')"
+                    },
+                    'brief': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'Updated MIDI generated from user-provided code.'
+        },
+        '400': {
+            'description': 'Bad Request'
+        },
+        '500': {
+            'description': 'Execution failure'
+        }
+    }
+})
+def render_code():
+    try:
+        data = request.json or {}
+        music_code = data.get('code', '')
+        brief = data.get('brief')
+
+        if not music_code:
+            return jsonify({'error': 'No code provided'}), 400
+
+        result = render_music_code(music_code)
+        if 'error' in result:
+            return jsonify(result), 500
+
+        if brief:
+            result['brief'] = brief
+
+        return jsonify(result)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/revise', methods=['POST'])
+@swag_from({
+    'tags': ['Generation'],
+    'description': 'Asks Gemini to change specifics in the current composition or regenerate a new variation.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'prompt': {'type': 'string'},
+                    'config': {'type': 'object'},
+                    'brief': {'type': 'string'},
+                    'code': {'type': 'string'},
+                    'request': {'type': 'string'},
+                    'mode': {
+                        'type': 'string',
+                        'example': 'change'
+                    }
+                }
+            }
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'A successful revision or regeneration response'
+        },
+        '400': {
+            'description': 'Bad Request'
+        },
+        '500': {
+            'description': 'Revision failure'
+        }
+    }
+})
+def revise():
+    try:
+        data = request.json or {}
+        user_prompt = data.get('prompt', '')
+        generation_config = data.get('config', {})
+        current_brief = data.get('brief', '')
+        current_code = data.get('code', '')
+        request_text = data.get('request', '')
+        mode = data.get('mode', 'change')
+
+        if not user_prompt:
+            return jsonify({'error': 'No prompt provided'}), 400
+        if mode != 'regenerate' and not current_code:
+            return jsonify({'error': 'No current code provided'}), 400
+
+        result = revise_music(
+            user_prompt,
+            generation_config,
+            current_code,
+            current_brief,
+            request_text=request_text,
+            mode=mode,
+        )
+
+        if 'error' in result:
+            return jsonify(result), 500
+
+        return jsonify(result)
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500

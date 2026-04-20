@@ -2,7 +2,7 @@ import requests
 import time
 
 def test_generate():
-    url = "http://127.0.0.1:5055/generate"
+    url = "http://127.0.0.1:8080/generate"
     payload = {"prompt": "A happy upbeat electronic loop with a catchy synth melody"}
     
     print(f"Sending request to {url}...")
@@ -29,7 +29,7 @@ def test_generate():
         print(f"Failed to connect: {e}")
 
 def download_mp3():
-        url = "http://127.0.0.1:5055/download/audio?format=mp3"
+        url = "http://127.0.0.1:8080/download/audio?format=mp3"
         print(f"Downloading MP3 from {url}...")
         response = requests.get(url)
         if response.status_code == 200:
