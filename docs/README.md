@@ -24,3 +24,7 @@
 - [Architecture](architecture.md) — How the two-stage generation pipeline and file layout function.
 - [Building with Musicpy](building_with_musicpy.md) — What Musicpy is, how its syntax works, and how to build STALGIA-like products.
 - [API Reference](api_reference.md) — Available REST endpoints and request/response shapes.
+
+## Production Credits
+
+**STALGIA** is not just a theoretical environment; it is a core component of the Misterscan production pipeline. The lead single Lifeline (2026) from the upcoming album 2007 Horizon was composed using the STALGIA engine, with final arrangement and mastering completed in FL Studio.
