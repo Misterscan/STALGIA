@@ -13,3 +13,9 @@ build/
 main-repo/
 *.mid
 .vscode/settings.json
+.ai-ignore
+css.sesi
+nice-music.py
+static/archive/style.css
+static/archive/index.html
+instructions.txt

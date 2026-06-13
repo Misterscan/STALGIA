@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STALGIA Music Maker</title>
+    <meta name="description"
+        content="STALGIA - Transform your musical ideas into MIDI compositions and more with the power of code.">
+    <meta name="keywords"
+        content="music generation, MIDI composer, AI music, musical brief, code to music, generative music, music synthesis">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="new-style.css?v=1.5.1">
+    <script
+        src="https://cdn.jsdelivr.net/combine/npm/html-midi-player@1.5.0/dist/midi-player.min.js,npm/html-midi-player@1.5.0/dist/midi-visualizer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+</head>
+
+<body>
+    <div id="desktop">
+        <main class="window core-interface" style="width: 95%; max-width: 800px; margin: 20px auto;">
+            <header class="title-bar title-node">
+                <div class="title-bar-text">
+                    <img src="favicon.ico" alt=""
+                        style="width:16px; height:16px; vertical-align: middle; margin-right: 5px;">
+                    STALGIA Music Maker
+                </div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize"></button>
+                    <button aria-label="Maximize"></button>
+                    <button aria-label="Close"></button>
+                </div>
+            </header>
+
+            <nav class="menu-bar">
+                <div class="menu-item" data-menu="file">
+                    File
+                    <ul class="dropdown-menu">
+                        <li id="menu-new-composition">New Composition</li>
+                        <li class="menu-separator"></li>
+                        <li id="menu-export-midi" class="disabled">Export MIDI</li>
+                        <li id="menu-export-mp3" class="disabled audio-download" data-format="mp3">Export MP3</li>
+                        <li id="menu-export-wav" class="disabled audio-download" data-format="wav">Export WAV</li>
+                        <li id="menu-export-flac" class="disabled audio-download" data-format="flac">Export FLAC</li>
+                        <li class="menu-separator"></li>
+                        <li id="menu-exit">Exit</li>
+                    </ul>
+                </div>
+                <div class="menu-item" data-menu="edit">
+                    Edit
+                    <ul class="dropdown-menu">
+                        <li id="menu-clear-prompt">Clear Prompt</li>
+                        <li id="menu-clear-config">Clear Advanced Config</li>
+                    </ul>
+                </div>
+                <div class="menu-item" data-menu="view">
+                    View
+                    <ul class="dropdown-menu">
+                        <li id="menu-toggle-code">Toggle Source Code</li>
+                        <li id="menu-toggle-config">Toggle Advanced Configuration</li>
+                        <li id="menu-toggle-statusbar">Toggle Status Bar</li>
+                    </ul>
+                </div>
+                <div class="menu-item" data-menu="help">
+                    Help
+                    <ul class="dropdown-menu">
+                        <li id="menu-quick-help">Quick Help</li>
+                        <li id="menu-about">About STALGIA</li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="window-body">
+                <section class="input-node">
+                    <fieldset>
+                        <legend>Composition Prompt</legend>
+                        <div class="prompt-header" style="margin-bottom: 10px;">
+                            <label for="prompt-input">Describe your music:</label>
+                            <div class="examples-dropdown" style="float: right;">
+                                <select id="example-select">
+                                    <option value="">Try an example...</option>
+                                    <option value="dreamy_lofi">Dreamy Lo-Fi Hip Hop</option>
+                                    <option value="upbeat_synthwave">Upbeat Synthwave / Synth-Pop</option>
+                                    <option value="cinematic_orchestral">Cinematic Orchestral Build</option>
+                                    <option value="energetic_punk">Energetic Pop Punk</option>
+                                    <option value="classical_piano">Classical Piano Arpeggios</option>
+                                    <option value="heavy_dubstep">Heavy Dubstep</option>
+                                    <option value="shuffle_blues">12-Bar Shuffle Blues</option>
+                                </select>
+                            </div>
+                        </div>
+                        <textarea id="prompt-input" style="width: 100%; height: 80px;"
+                            placeholder="E.g., A melancholic piano ballad about a rainy night in Tokyo..."></textarea>
+                    </fieldset>
+
+                    <details class="params-disclosure" style="margin-top: 10px;">
+                        <summary>Advanced Configuration</summary>
+                        <div class="params-grid fieldset-container"
+                            style="padding: 10px; border: 1px inset #fff; background: #f0f0f0; margin-top: 5px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="param-cell"><label style="display: block;">GENRE</label>
+                                <select id="config-genre" style="width: 100%;">
+                                    <option value="">ANY</option>
+                                </select>
+                            </div>
+                            <div class="param-cell"><label style="display: block;">MOOD</label>
+                                <select id="config-mood" style="width: 100%;">
+                                    <option value="">ANY</option>
+                                </select>
+                            </div>
+                            <div class="param-cell"><label style="display: block;">TEMPO</label>
+                                <input id="config-tempo" type="number" placeholder="AUTO" style="width: 100%;">
+                            </div>
+                            <div class="param-cell"><label style="display: block;">KEY/SCALE</label>
+                                <select id="config-key" style="width: 100%;">
+                                    <option value="">AUTO</option>
+                                </select>
+                            </div>
+                            <div class="param-cell full" style="grid-column: span 2;"><label
+                                    style="display: block;">STRUCTURE</label>
+                                <select id="config-structure" style="width: 100%;">
+                                    <option value="">AUTO</option>
+                                </select>
+                            </div>
+                            <div class="param-cell full" style="grid-column: span 2;"><label
+                                    style="display: block;">INSTRUMENTS</label>
+                                <select id="config-instruments" multiple style="width: 100%; height: 60px;"></select>
+                                <p id="config-instruments-help" style="font-size: 10px; margin: 2px 0;">Ctrl+Click to
+                                    multi-select</p>
+                            </div>
+                            <div class="param-cell full" style="grid-column: span 2;"><label
+                                    style="display: block;">NOTES</label>
+                                <textarea id="config-notes" style="width: 100%; height: 40px;"
+                                    placeholder="Specific instructions..."></textarea>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="button-container" style="text-align: right; margin-top: 15px;">
+                        <button id="generate-btn" style="padding: 5px 20px; font-weight: bold;">
+                            <span class="btn-text">Compose</span>
+                            <span class="loader-text hidden">Composing...</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section id="result-section" class="output-node hidden"
+                    style="margin-top: 20px; border-top: 2px groove #eee; padding-top: 15px;">
+                    <div id="generation-warning" class="warning-msg hidden"
+                        style="background: #ffffcc; border: 1px solid #999; padding: 5px; margin-bottom: 10px;"></div>
+
+                    <div class="tabs">
+                        <div class="output-module view-player">
+                            <fieldset>
+                                <legend>Audio Preview</legend>
+                                <div class="hq-container" style="text-align: center; padding: 10px;">
+                                    <p id="audio-loading-text" class="hidden-fade">Creating audio...</p>
+                                    <audio id="audio-player" controls style="display: none; width: 100%;"></audio>
+                                </div>
+                            </fieldset>
+                        </div>
+
+
+
+                        <div class="output-module view-brief" style="margin-top: 10px;">
+                            <fieldset>
+                                <legend>Musical Brief</legend>
+                                <div id="brief-text" class="markdown-content text-left"
+                                    style="background: #fff; border: 1px inset #808080; padding: 10px; height: 150px; overflow-y: scroll;">
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <section id="code-section" class="output-module view-code hidden" style="margin-top: 10px;">
+                            <fieldset>
+                                <legend>Source Code (Musicpy)</legend>
+                                <p class="code-caption" style="font-size: 11px; margin-bottom: 5px;">Edit source and
+                                    re-render:</p>
+                                <textarea id="code-text" class="code-editor" spellcheck="false"
+                                    style="width: 100%; height: 150px; font-family: monospace; background: #000; color: #0f0;"></textarea>
+                                <div class="code-actions" style="margin-top: 5px;">
+                                    <button id="render-code-btn" type="button" class="secondary-action">Run Edited
+                                        Code</button>
+                                </div>
+
+                                <div class="stalgia-revision-panel"
+                                    style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+                                    <label for="revision-request" style="display: block; font-weight: bold;">Refine
+                                        Composition:</label>
+                                    <textarea id="revision-request" style="width: 100%; height: 40px;"
+                                        placeholder="e.g., make the melody more syncopated..."></textarea>
+                                    <div class="revision-actions" style="margin-top: 5px; display: flex; gap: 5px;">
+                                        <button id="revise-btn" type="button" class="secondary-action">Apply
+                                            Changes</button>
+                                        <button id="regenerate-btn" type="button" class="secondary-action">Regenerate
+                                            All</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </section>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="status-bar" id="app-status-bar">
+                <p class="status-bar-field">Prompt -> Code -> Music</p>
+                <p id="status-text" class="status-bar-field">System Ready</p>
+                <p class="status-bar-field">Version: 1.5</p>
+            </footer>
+        </main>
+
+        <div class="taskbar">
+            <button class="start-button">
+                <img src="favicon.ico" alt="" width="16" height="16">
+                <span>Start</span>
+            </button>
+            <div class="taskbar-divider"></div>
+            <div class="active-tasks">
+                <div class="task-item active">STALGIA</div>
+            </div>
+            <div class="system-tray">
+                <div class="tray-icons"></div>
+                <div class="clock">2:52 AM</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.5.1"></script>
+    <script>
+        // Wire loading text logic to match script.js expectations
+        const btn = document.getElementById('generate-btn');
+        const observer = new MutationObserver(() => {
+            const isLoading = btn.classList.contains('loading');
+            btn.querySelector('.btn-text').style.display = isLoading ? 'none' : 'block';
+            btn.querySelector('.loader-text').style.display = isLoading ? 'block' : 'none';
+        });
+        observer.observe(btn, { attributes: true, attributeFilter: ['class'] });
+    </script>
+
+    <!-- Dialog Modals -->
+    <div id="dialog-overlay" class="hidden"></div>
+
+    <div id="about-dialog" class="window dialog-window hidden">
+        <header class="title-bar">
+            <div class="title-bar-text">About STALGIA</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" class="close-dialog-btn"></button>
+            </div>
+        </header>
+        <div class="window-body"
+            style="text-align: center; padding: 15px; display: flex; flex-direction: column; align-items: center;">
+            <img src="logo.png" alt="STALGIA Logo" style="width: 48px; height: 48px; margin-bottom: 10px;">
+            <h3 style="margin: 0 0 5px 0; font-size: 16px;">STALGIA Music Maker</h3>
+            <p style="font-size: 11px; margin: 0 0 10px 0; line-height: 1.3;">
+                Version 1.5<br>
+                Powered by musicpy
+            </p>
+            <p style="font-size: 11px; margin: 0 0 15px 0; color: #555; max-width: 240px;">
+                Transform your musical descriptions into MIDI compositions using AI.
+            </p>
+            <button class="close-dialog-btn" style="min-width: 75px; padding: 2px 10px;">OK</button>
+        </div>
+    </div>
+
+    <div id="help-dialog" class="window dialog-window hidden">
+        <header class="title-bar">
+            <div class="title-bar-text">STALGIA Help & Instructions</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" class="close-dialog-btn"></button>
+            </div>
+        </header>
+        <div class="window-body" style="padding: 15px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">How to use STALGIA:</h4>
+            <ol style="padding-left: 20px; margin: 0 0 15px 0; font-size: 12px; line-height: 1.4;">
+                <li>Enter a description of the music in the <strong>Prompt</strong> text area.</li>
+                <li>Customize options in <strong>Advanced Configuration</strong> (optional).</li>
+                <li>Click <strong>Compose</strong> to generate the MIDI composition and audio preview.</li>
+                <li>Go to <strong>File &gt; Export...</strong> in the menu bar to download your files.</li>
+                <li>You can refine the result using the follow-up panel or edit the code directly.</li>
+            </ol>
+            <div style="text-align: right;">
+                <button class="close-dialog-btn" style="min-width: 75px; padding: 2px 10px;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Windows XP Turn Off Computer Dialog -->
+    <div id="shutdown-dialog" class="window dialog-window hidden">
+        <header class="title-bar">
+            <div class="title-bar-text">Turn off computer</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" class="close-dialog-btn"></button>
+            </div>
+        </header>
+        <div class="window-body shutdown-body">
+            <p class="shutdown-title">What do you want the computer to do?</p>
+            <div class="shutdown-options">
+                <div class="shutdown-option disabled">
+                    <button class="shutdown-btn standby" disabled>
+                        <span>🌙</span>
+                    </button>
+                    <span class="shutdown-label">Standby</span>
+                </div>
+                <div class="shutdown-option" id="btn-turn-off">
+                    <button class="shutdown-btn turn-off">
+                        <span>🛑</span>
+                    </button>
+                    <span class="shutdown-label">Turn Off</span>
+                </div>
+                <div class="shutdown-option" id="btn-restart">
+                    <button class="shutdown-btn restart">
+                        <span>🔄</span>
+                    </button>
+                    <span class="shutdown-label">Restart</span>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 10px;">
+                <button class="close-dialog-btn" style="min-width: 70px; padding: 2px 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Retro Shutdown Overlay -->
+    <div id="shutdown-screen" class="hidden">
+        <p class="shutdown-screen-msg">It is now safe to turn off your computer.</p>
+        <p class="shutdown-screen-sub">Or click anywhere to restart STALGIA.</p>
+    </div>
+</body>
+
+</html>

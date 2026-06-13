@@ -53,63 +53,38 @@ This brief should include:
 Critical requirements:
 1. The Section Plan must use explicit bar counts for every section, not timestamps.
 2. Every section must specify how many bars it lasts, and the total form should be internally consistent.
-3. Describe parts in ways that map cleanly to `musicpy`: chords, bassline, lead, pad, arpeggio, drum pattern, rests, repetitions, section reuse.
+3. Describe parts in ways that map cleanly to `musicpy`: chords, bassline, lead, pad, arpeggio, rests, repetitions, section reuse.
 4. Avoid production instructions that `musicpy` cannot actually perform directly, such as sidechain compression, filter automation, distortion plugins, vocal sampling workflows, or mixing/mastering effects. If needed, translate those ideas into note-level arrangement guidance instead.
 5. When silence is needed, describe it as a section-length rest with an exact bar count.
 6. Keep the arrangement realistic for symbolic composition: focus on notes, rhythms, repetitions, layering, and entry/exit points.
 7. For every active musical layer, make the duration expectations clear so Stage 2 can keep all tracks aligned.
-8. Prefer section descriptions like "8 bars of chords with 8 bars of drums" rather than timestamp prose like "0:00-0:30".
-
-In the Section Plan, use a compact format like this:
-- Intro: 4 bars. Drums only, sparse pad stabs every bar.
-- Verse A: 8 bars. Chords + bass + drums. Lead silent for all 8 bars.
-- Hook: 8 bars. Full drums, chords, bass, and repeated lead motif.
-- Outro: 4 bars. Remove lead, keep drums for 2 bars, final chord stab on last bar.
+8. Prefer section descriptions like "8 bars of chords with 8 bars of bass" rather than timestamp prose like "0:00-0:30".
 
 In Arrangement Rules For Generation, include concrete implementation guidance such as:
-- Reuse motifs by repeating exact bar-length phrases.
 - Keep all tracks aligned to the same total number of bars.
-- Use simple section blocks that can be concatenated and repeated.
 - Do not invent effects that require audio processing; express intensity through note density, octave changes, or layering.
 
 Example Input: "A calm sunset"
 
 Example Output:
 Title: (create one based on user input, e.g. "Serenity Calls")
+
 ### Style/Genre
-Lo-fi hip hop with warm jazz harmony.
 
 ### Mood / Emotional Arc
-Gentle, reflective, and slightly nostalgic. Start sparse, then add warmth in the middle, and end quietly.
 
 ### Tempo (BPM)
-85 BPM
 
 ### Key / Scale
-Eb major
 
 ### Instrument Plan
-- Electric Piano (GM 5): main chords
-- Acoustic Bass (GM 33): simple root-note bassline
-- Soft Synth Lead (GM 82): short answering melody
-- Drums (channel 9): relaxed kick, snare, and hi-hat groove
 
 ### Core Musical Ideas
-- A two-chord piano motif that repeats with slight variation.
-- Bass mostly follows roots in even rhythm.
-- Lead enters only after the intro and answers the chord phrase.
 
 ### Section Plan
-- Intro: 4 bars. Electric piano chords only.
-- Verse: 8 bars. Add bass and drums. Keep lead silent.
-- Hook: 8 bars. Keep chords, bass, and drums. Add a simple airy lead motif for all 8 bars.
-- Outro: 4 bars. Remove drums after 2 bars, then end on piano chord.
 
 ### Arrangement Rules For Generation
-- Build each section as its own reusable phrase.
-- Keep all tracks aligned to 24 total bars.
-- Use exact bar-count rests where an instrument is silent.
-- Express energy changes by adding notes or layers, not studio effects.
+
 """
 
 STAGE2_PROMPT = """You are an expert Musicpy programmer. Your job is to take a detailed musical brief and generate valid Python code using the `musicpy` library.
@@ -122,9 +97,8 @@ Follow these syntax rules based squarely on the official musicpy documentation:
 3. Rhythm formatting: Use lists or fractions for duration/intervals via the `%` operator. 
    - E.g. `c = C('Cmaj7', 4) % (1/2, 1/8)` (same rhythm for all notes)
    - E.g. `melody = chord('C5, D5') % ([1/4, 1/8], [0, 0])` (varying rhythms)
-4. Drum tracks: You may use the `drum('K, H, S, H')` function (K=Kick, H=Hi-hat, S=Snare, -=rest), but you MUST IMMEDIATELY append `.notes` to convert it into a standard `chord`! Do NOT leave it as a `drum` object, or concatenation and track operations will fatally crash!
-   - Correct: `kick_snare = drum('K, -, S, -').notes` (Now it's a safe `chord` object!)
-   - You can also manually build drum patterns using standard `chord()` objects mapped to channel 9. Use the corresponding note string from the Drum Map (e.g. `chord('C2')` for Kick, `chord('E2')` for Snare).
+4. Drum tracks: You can manually build drum patterns using standard `chord()` objects mapped to channel 9. Use the corresponding note string from the Drum Map (e.g. `chord('C2')` for Kick, `chord('E2')` for Snare).
+   - DO NOT USE THE BASIC DRUM KIT, USE THE CHORD OBJECT INSTEAD WITH DRUM SOUNDS FROM THE INSTRUMENT MAP
 5. Tracks: Wrap your assemblies in a `track` object: `t1 = track(my_chord, instrument=1, start_time=8)` (pass the GM instrument integer here, and use `start_time` in bars to place it later in the song).
    - CRITICAL Limit Workaround: MIDI only supports 16 channels. You must manually assign `channel=X` if you use more than 15 total `track` objects. Assign the same `channel` (e.g. `channel=0`) to all tracks sharing the same `instrument`.
    - CRITICAL: For drums, just pass the assembled notes into `track(..., channel=9)`. Ensure everything you pass is a `chord` object (whether built manually or via `drum(...).notes`).

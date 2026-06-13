@@ -58,7 +58,7 @@ def _expand_prompt_with_retries(combined_prompt):
                 STAGE1_PROMPT,
                 'gemini-3.1-flash-lite-preview',
                 0.2,
-                'low',
+                'medium',
             )
             print(f"Expanded Brief: {expanded_brief}")
             return {'brief': expanded_brief}
@@ -69,7 +69,7 @@ def _expand_prompt_with_retries(combined_prompt):
     return {'error': f'Gemini prompt expansion failed after 3 attempts. Last error: {last_error}'}
 
 
-def _generate_code_with_retries(initial_prompt, retry_prefix, initial_model='gemini-3.1-pro-preview'):
+def _generate_code_with_retries(initial_prompt, retry_prefix, initial_model='gemini-3.5-flash'):
     if not client:
         return {'error': 'GEMINI_API_KEY is not configured'}
 
@@ -84,8 +84,8 @@ def _generate_code_with_retries(initial_prompt, retry_prefix, initial_model='gem
         )
 
         current_model = initial_model if attempt == 0 else 'gemini-3.1-flash-lite-preview'
-        current_temp = 0.3 if attempt == 0 else 0.1
-        current_thinking_level = 'low' if attempt == 0 else 'minimal'
+        current_temp = 0.4 if attempt == 0 else 0.1
+        current_thinking_level = 'medium' if attempt == 0 else 'minimal'
 
         try:
             response_text = _request_gemini_text(
@@ -206,8 +206,8 @@ def generate_music(user_prompt, generation_config, variation_request=''):
             model='gemini-3.1-flash-lite-preview',
             config=types.GenerateContentConfig(
                 system_instruction=STAGE1_PROMPT,
-                temperature=0.2,
-                thinking_config=types.ThinkingConfig(thinking_level="low")
+                temperature=0.4,
+                thinking_config=types.ThinkingConfig(thinking_level="medium")
             ),
             contents=[combined_prompt]
         )
@@ -222,9 +222,9 @@ def generate_music(user_prompt, generation_config, variation_request=''):
     for attempt in range(3):
         prompt = expanded_brief if attempt == 0 else f"The following musicpy code failed with error: {last_error}. Please fix it and return the full corrected code.\n\nCode:\n{music_code}"
 
-        current_model = 'gemini-3.1-pro-preview' if attempt == 0 else 'gemini-3.1-flash-lite-preview'
-        current_temp = 0.3 if attempt == 0 else 0.1
-        current_thinking_config = types.ThinkingConfig(thinking_level="low") if attempt == 0 else types.ThinkingConfig(thinking_level="minimal")
+        current_model = 'gemini-3.5-flash' if attempt == 0 else 'gemini-3.1-flash-lite-preview'
+        current_temp = 0.4 if attempt == 0 else 0.1
+        current_thinking_config = types.ThinkingConfig(thinking_level="medium") if attempt == 0 else types.ThinkingConfig(thinking_level="minimal")
 
         try:
             response2 = client.models.generate_content(
@@ -271,7 +271,7 @@ def generate_music(user_prompt, generation_config, variation_request=''):
 def revise_music(user_prompt, generation_config, current_code, current_brief, request_text='', mode='change'):
     normalized_mode = (mode or 'change').strip().lower()
     if normalized_mode == 'regenerate':
-        variation_request = request_text or 'Generate a fresh variation with a noticeably different melody.'
+        variation_request = request_text or 'Generate a fresh variation with a noticeably different melody. Do not change the instruments, tempo, key, or structure. Just change the melody to be more interesting.'
         return generate_music(user_prompt, generation_config, variation_request=variation_request)
 
     if not client:
@@ -289,8 +289,8 @@ def revise_music(user_prompt, generation_config, current_code, current_brief, re
         f"User change request:\n{request_text or 'Improve the composition while preserving its identity.'}\n\n"
         "Requirements:\n"
         "- Return full replacement musicpy code only.\n"
-        "- Preserve the overall song identity unless the user explicitly asks to replace it.\n"
-        "- Change melody, harmony, instrumentation, arrangement, or rhythm only as needed to satisfy the request.\n"
+        "- Preserve the instruments used and the overall song identity unless the user explicitly asks to replace it.\n"
+        "- Change melody, harmony, instrumentation, arrangement, or rhythm ONLY as needed to satisfy the request.\n"
         "- Keep the final code executable and continue defining result.\n\n"
         f"Current code:\n{cleaned_code}"
     )

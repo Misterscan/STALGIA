@@ -187,11 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
         codeText.value = generationState.code;
 
         const midiUrl = `${apiBase}/download/midi?t=${Date.now()}`;
-        downloadMidiBtn.href = midiUrl;
+        if (downloadMidiBtn) downloadMidiBtn.href = midiUrl;
 
         resultSection.classList.remove('hidden');
         codeSection.classList.remove('hidden');
         resultSection.scrollIntoView({ behavior: 'smooth' });
+
+        // Enable exports in the dropdown menu
+        enableExportMenus();
     }
 
     async function refreshAudioPreview() {
@@ -221,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             audioPlayer.style.display = 'none';
             audioLoadingText.style.display = 'block';
             audioLoadingText.textContent = loadingText;
+            updateStatusText(loadingText);
         }
 
         setActionButtonsDisabled(true);
@@ -245,10 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 showError(data.warning);
             }
 
+            updateStatusText('Rendering studio audio on backend...');
             await refreshAudioPreview();
+            updateStatusText('System Ready');
         } catch (error) {
             console.error(error);
             showError(error.message || 'Something went wrong. Please check backend logs.');
+            updateStatusText('Generation failed.');
         } finally {
             generateBtn.classList.remove('loading');
             setActionButtonsDisabled(false);
@@ -266,6 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
         resultSection.classList.add('hidden');
         codeSection.classList.add('hidden');
         if (document.getElementById('empty-state')) document.getElementById('empty-state').classList.add('hidden');
+
+        // Disable exports during new generation
+        disableExportMenus();
 
         await performGenerationRequest(`${apiBase}/generate`, { prompt, config }, {
             loadingText: 'Rendering studio audio on backend. Please wait (~15 seconds)...'
@@ -328,16 +338,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle Audio Downloads
     document.querySelectorAll('.audio-download').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+            if (btn.classList.contains('disabled')) {
+                e.stopPropagation();
+                return;
+            }
             const format = btn.getAttribute('data-format');
             const downloadUrl = `${apiBase}/download/audio?format=${format}&t=${Date.now()}`;
             
-            // Show loading state on the button
+            // Show loading state on the button / menu item
             const originalText = btn.textContent;
-            btn.textContent = 'Rendering...';
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            btn.style.cursor = 'wait';
+            btn.textContent = btn.tagName === 'LI' ? `Exporting ${format.toUpperCase()}...` : 'Rendering...';
+            btn.classList.add('disabled');
+            if (btn.tagName !== 'LI') {
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'wait';
+            }
+            updateStatusText(`Rendering and downloading ${format.toUpperCase()}...`);
 
             try {
                 // Fetch the blob asynchronously so the user knows something is happening
@@ -355,16 +373,267 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.click();
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(blobUrl);
+                updateStatusText('System Ready');
             } catch (error) {
                 console.error(error);
                 alert(`Error rendering ${format.toUpperCase()}. Please check backend logs.`);
+                updateStatusText('Export failed.');
             } finally {
                 // Reset button state
                 btn.textContent = originalText;
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                btn.style.cursor = 'pointer';
+                btn.classList.remove('disabled');
+                if (btn.tagName !== 'LI') {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
             }
         });
     });
+
+    // --- STATUS BAR HELPER ---
+    function updateStatusText(msg) {
+        const statusText = document.getElementById('status-text');
+        if (statusText) {
+            statusText.textContent = msg;
+        }
+    }
+
+    // --- MENU DROPDOWN LOGIC ---
+    const menuItems = document.querySelectorAll('.menu-bar .menu-item');
+    let activeMenu = null;
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (e.target.tagName === 'LI') {
+                if (e.target.classList.contains('disabled')) {
+                    return;
+                }
+                closeAllMenus();
+                return;
+            }
+
+            if (activeMenu === item) {
+                closeAllMenus();
+            } else {
+                closeAllMenus();
+                item.classList.add('active');
+                activeMenu = item;
+            }
+        });
+
+        item.addEventListener('mouseenter', () => {
+            if (activeMenu && activeMenu !== item) {
+                closeAllMenus();
+                item.classList.add('active');
+                activeMenu = item;
+            }
+        });
+    });
+
+    document.addEventListener('click', () => {
+        closeAllMenus();
+    });
+
+    function closeAllMenus() {
+        menuItems.forEach(item => {
+            item.classList.remove('active');
+        });
+        activeMenu = null;
+    }
+
+    // --- EXPORT ENABLE/DISABLE HELPERS ---
+    function disableExportMenus() {
+        const exportMidi = document.getElementById('menu-export-midi');
+        const exportMp3 = document.getElementById('menu-export-mp3');
+        const exportWav = document.getElementById('menu-export-wav');
+        const exportFlac = document.getElementById('menu-export-flac');
+        
+        [exportMidi, exportMp3, exportWav, exportFlac].forEach(el => {
+            if (el) el.classList.add('disabled');
+        });
+    }
+
+    function enableExportMenus() {
+        const exportMidi = document.getElementById('menu-export-midi');
+        const exportMp3 = document.getElementById('menu-export-mp3');
+        const exportWav = document.getElementById('menu-export-wav');
+        const exportFlac = document.getElementById('menu-export-flac');
+        
+        [exportMidi, exportMp3, exportWav, exportFlac].forEach(el => {
+            if (el) el.classList.remove('disabled');
+        });
+    }
+
+    // --- FILE MENU ACTIONS ---
+    const menuNewComposition = document.getElementById('menu-new-composition');
+    if (menuNewComposition) {
+        menuNewComposition.addEventListener('click', () => {
+            promptInput.value = '';
+            if (exampleSelect) exampleSelect.value = '';
+            if (configGenre) configGenre.value = '';
+            if (configMood) configMood.value = '';
+            if (configTempo) configTempo.value = '';
+            if (configKey) configKey.value = '';
+            if (configStructure) configStructure.value = '';
+            if (configNotes) configNotes.value = '';
+            
+            if (configInstruments) {
+                Array.from(configInstruments.options).forEach(opt => opt.selected = false);
+            }
+
+            const disclosure = document.querySelector('.params-disclosure');
+            if (disclosure) disclosure.open = false;
+
+            if (resultSection) resultSection.classList.add('hidden');
+            if (codeSection) codeSection.classList.add('hidden');
+            
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState) emptyState.classList.remove('hidden');
+
+            generationState.prompt = '';
+            generationState.config = {};
+            generationState.brief = '';
+            generationState.code = '';
+
+            disableExportMenus();
+            updateStatusText('System Ready');
+        });
+    }
+
+    const menuExportMidi = document.getElementById('menu-export-midi');
+    if (menuExportMidi) {
+        menuExportMidi.addEventListener('click', (e) => {
+            if (menuExportMidi.classList.contains('disabled')) return;
+            const midiUrl = `${apiBase}/download/midi?t=${Date.now()}`;
+            const link = document.createElement('a');
+            link.href = midiUrl;
+            link.download = `output.mid`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+
+    // --- EDIT MENU ACTIONS ---
+    const menuClearPrompt = document.getElementById('menu-clear-prompt');
+    if (menuClearPrompt) {
+        menuClearPrompt.addEventListener('click', () => {
+            promptInput.value = '';
+        });
+    }
+
+    const menuClearConfig = document.getElementById('menu-clear-config');
+    if (menuClearConfig) {
+        menuClearConfig.addEventListener('click', () => {
+            if (configGenre) configGenre.value = '';
+            if (configMood) configMood.value = '';
+            if (configTempo) configTempo.value = '';
+            if (configKey) configKey.value = '';
+            if (configStructure) configStructure.value = '';
+            if (configNotes) configNotes.value = '';
+            if (configInstruments) {
+                Array.from(configInstruments.options).forEach(opt => opt.selected = false);
+            }
+        });
+    }
+
+    // --- VIEW MENU ACTIONS ---
+    const menuToggleCode = document.getElementById('menu-toggle-code');
+    if (menuToggleCode) {
+        menuToggleCode.addEventListener('click', () => {
+            if (codeSection) {
+                codeSection.classList.toggle('hidden');
+            }
+        });
+    }
+
+    const menuToggleConfig = document.getElementById('menu-toggle-config');
+    if (menuToggleConfig) {
+        menuToggleConfig.addEventListener('click', () => {
+            const disclosure = document.querySelector('.params-disclosure');
+            if (disclosure) {
+                disclosure.open = !disclosure.open;
+            }
+        });
+    }
+
+    const menuToggleStatusbar = document.getElementById('menu-toggle-statusbar');
+    if (menuToggleStatusbar) {
+        menuToggleStatusbar.addEventListener('click', () => {
+            const statusbar = document.getElementById('app-status-bar');
+            if (statusbar) {
+                statusbar.classList.toggle('hidden');
+            }
+        });
+    }
+
+    // --- HELP MENU & DIALOG MODALS ---
+    const menuQuickHelp = document.getElementById('menu-quick-help');
+    const menuAbout = document.getElementById('menu-about');
+    const menuExit = document.getElementById('menu-exit');
+    
+    const dialogOverlay = document.getElementById('dialog-overlay');
+    const aboutDialog = document.getElementById('about-dialog');
+    const helpDialog = document.getElementById('help-dialog');
+    const shutdownDialog = document.getElementById('shutdown-dialog');
+    const shutdownScreen = document.getElementById('shutdown-screen');
+
+    if (menuQuickHelp && helpDialog && dialogOverlay) {
+        menuQuickHelp.addEventListener('click', () => {
+            helpDialog.classList.remove('hidden');
+            dialogOverlay.classList.remove('hidden');
+        });
+    }
+
+    if (menuAbout && aboutDialog && dialogOverlay) {
+        menuAbout.addEventListener('click', () => {
+            aboutDialog.classList.remove('hidden');
+            dialogOverlay.classList.remove('hidden');
+        });
+    }
+
+    if (menuExit && shutdownDialog && dialogOverlay) {
+        menuExit.addEventListener('click', () => {
+            shutdownDialog.classList.remove('hidden');
+            dialogOverlay.classList.remove('hidden');
+        });
+    }
+
+    const closeDialogs = () => {
+        if (aboutDialog) aboutDialog.classList.add('hidden');
+        if (helpDialog) helpDialog.classList.add('hidden');
+        if (shutdownDialog) shutdownDialog.classList.add('hidden');
+        if (dialogOverlay) dialogOverlay.classList.add('hidden');
+    };
+
+    document.querySelectorAll('.close-dialog-btn').forEach(btn => {
+        btn.addEventListener('click', closeDialogs);
+    });
+
+    if (dialogOverlay) {
+        dialogOverlay.addEventListener('click', closeDialogs);
+    }
+
+    const btnTurnOff = document.getElementById('btn-turn-off');
+    if (btnTurnOff && shutdownScreen) {
+        btnTurnOff.addEventListener('click', () => {
+            closeDialogs();
+            shutdownScreen.classList.remove('hidden');
+        });
+    }
+
+    const btnRestart = document.getElementById('btn-restart');
+    if (btnRestart) {
+        btnRestart.addEventListener('click', () => {
+            window.location.reload();
+        });
+    }
+
+    if (shutdownScreen) {
+        shutdownScreen.addEventListener('click', () => {
+            window.location.reload();
+        });
+    }
 });

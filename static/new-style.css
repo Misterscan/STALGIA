@@ -1,0 +1,542 @@
+:root {
+    --xp-blue-dark: #0058e6;
+    --xp-blue-light: #245edb;
+    --xp-blue-title: linear-gradient(to bottom, #0058e6 0%, #245edb 9%, #3a8df5 18%, #245edb 92%, #0058e6 100%);
+    --xp-bg-grey: #ece9d8;
+    --xp-border-light: #ffffff;
+    --xp-border-dark: #808080;
+    --xp-border-shadow: #404040;
+    --xp-text-color: #000000;
+    --xp-button-bg: #f0f0f0;
+    --xp-selection: #316ac5;
+    --xp-green-start: #3c813c;
+    --spacing-sm: 4px;
+    --spacing-md: 8px;
+    --spacing-lg: 16px;
+    --font-base: 16px;
+    --font-family: 'Tahoma', 'Segoe UI', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #008080; /* Classic Teal background */
+    font-family: var(--font-family);
+    font-size: var(--font-base);
+    color: var(--xp-text-color);
+    overflow-x: hidden;
+}
+
+#desktop {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 40px; /* Space for taskbar */
+}
+
+/* Window Styling */
+.window {
+    background: var(--xp-bg-grey);
+    border: 1px solid var(--xp-blue-dark);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.title-bar {
+    background: var(--xp-blue-title);
+    padding: 3px 5px 3px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    height: 30px;
+}
+
+.title-bar-text {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.title-bar-controls button {
+    width: 21px;
+    height: 21px;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    background-color: #efefef;
+    position: relative;
+    box-shadow: inset -1px -1px 1px rgba(0,0,0,0.2);
+}
+
+.title-bar-controls button[aria-label="Close"] {
+    background-color: #e04343;
+    margin-left: 2px;
+}
+
+.title-bar-controls button[aria-label="Close"]::after {
+    content: "×";
+    color: white;
+    font-size: 16px;
+    position: absolute;
+    top: -1px;
+    left: 4px;
+}
+
+/* Menu Bar */
+.menu-bar {
+    display: flex;
+    background: var(--xp-bg-grey);
+    padding: 2px 5px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    font-size: 13px;
+    position: relative;
+    z-index: 9999;
+    user-select: none;
+}
+
+.menu-item {
+    padding: 2px 8px;
+    cursor: default;
+    position: relative;
+}
+
+.menu-item:hover, .menu-item.active {
+    background: var(--xp-selection);
+    color: white;
+}
+
+/* Dropdown Menus */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--xp-bg-grey);
+    border: 2px outset #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    padding: 2px;
+    margin: 0;
+    list-style: none;
+    min-width: 160px;
+    z-index: 10000;
+}
+
+.menu-item.active .dropdown-menu {
+    display: block !important;
+}
+
+.dropdown-menu li {
+    color: var(--xp-text-color) !important;
+    padding: 4px 24px 4px 16px;
+    white-space: nowrap;
+    font-size: 12px;
+    cursor: default;
+    background: transparent;
+    text-align: left;
+}
+
+.dropdown-menu li:hover {
+    background: var(--xp-selection) !important;
+    color: white !important;
+}
+
+.dropdown-menu li.disabled {
+    color: #808080 !important;
+    cursor: not-allowed;
+}
+
+.dropdown-menu li.disabled:hover {
+    background: transparent !important;
+    color: #808080 !important;
+}
+
+.dropdown-menu .menu-separator {
+    height: 1px;
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #fff;
+    margin: 4px 1px;
+    padding: 0;
+}
+
+.dropdown-menu .menu-separator:hover {
+    background: transparent !important;
+}
+
+/* Window Body */
+.window-body {
+    padding: var(--spacing-lg);
+}
+
+/* Typography Hierarchy */
+h1 { font-size: 2rem; margin-bottom: var(--spacing-lg); }
+h2 { font-size: 1.5rem; margin-bottom: var(--spacing-md); }
+h3 { font-size: 1.25rem; margin-bottom: var(--spacing-sm); }
+
+/* Form Elements */
+fieldset {
+    border: 2px groove #fff;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+legend {
+    font-weight: bold;
+    padding: 0 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-size: 14px;
+}
+
+input, textarea, select {
+    background: #fff;
+    border: 2px inset #d8d4be;
+    padding: 4px;
+    font-family: var(--font-family);
+    font-size: 14px;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: 1px solid #ff9900;
+}
+
+/* Buttons */
+button {
+    background: linear-gradient(to bottom, #fff 0%, #ebebeb 50%, #dbdbdb 51%, #fff 100%);
+    border: 1px solid #003c74;
+    border-radius: 3px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    box-shadow: inset 0 0 1px #fff;
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #fff 0%, #f2f2f2 50%, #e6e6e6 51%, #fff 100%);
+    border-color: #ff9900;
+}
+
+button:active {
+    background: #dbdbdb;
+    box-shadow: inset 2px 2px 3px rgba(0,0,0,0.2);
+}
+
+#generate-btn {
+    background: linear-gradient(to bottom, #b8e2b8 0%, #3c813c 100%);
+    color: white;
+    border-color: #2d612d;
+    padding: 8px 24px;
+}
+
+/* Grid Layouts */
+.params-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.param-cell.full {
+    grid-column: 1 / -1;
+}
+
+/* Status Bar */
+.status-bar {
+    background: var(--xp-bg-grey);
+    border-top: 1px solid var(--xp-border-dark);
+    display: flex;
+    padding: 2px;
+    gap: 2px;
+}
+
+.status-bar-field {
+    border: 1px inset #fff;
+    padding: 2px 8px;
+    margin: 0;
+    font-size: 12px;
+    flex: 1;
+}
+
+/* Taskbar */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
+    display: flex;
+    align-items: center;
+    z-index: 9999;
+    padding: 0 2px;
+}
+
+.start-button {
+    background: linear-gradient(to bottom, #53bd53 0%, #3c813c 50%, #2d612d 100%);
+    border: none;
+    border-radius: 0 10px 10px 0;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+.start-button img {
+    margin-right: 5px;
+}
+
+.active-tasks {
+    flex: 1;
+    display: flex;
+    height: 100%;
+    padding: 2px 5px;
+}
+
+.task-item {
+    background: #3c81ff;
+    color: white;
+    border-radius: 3px;
+    padding: 0 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    max-width: 150px;
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-right: 2px;
+}
+
+.task-item.active {
+    background: #1e52b7;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.system-tray {
+    background: #0997ff;
+    border-left: 1px solid rgba(0,0,0,0.2);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-size: 12px;
+}
+
+/* Utilities */
+.hidden { display: none !important; }
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .window {
+        width: 100% !important;
+        margin: 0 !important;
+        height: calc(100vh - 30px);
+        border-radius: 0;
+    }
+    
+    .params-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .export-grid {
+        flex-wrap: wrap;
+    }
+}
+
+/* Markdown and Code Area */
+.markdown-content {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.code-editor {
+    scrollbar-width: thin;
+    scrollbar-color: var(--xp-border-dark) var(--xp-bg-grey);
+}
+
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border: 1px inset #ccc;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--xp-bg-grey);
+    border: 2px outset #fff;
+}
+
+::-webkit-scrollbar-button {
+    background: var(--xp-bg-grey);
+    border: 1px outset #fff;
+    width: 16px;
+    height: 16px;
+}
+
+details summary {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+    background: #e1e1e1;
+    border: 1px outset #fff;
+    margin-bottom: 2px;
+}
+
+.warning-msg {
+    font-size: 13px;
+    color: #555;
+}
+
+/* Dialog Modals & Overlays */
+#dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+}
+
+.dialog-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.5);
+    background: var(--xp-bg-grey);
+    border: 1.5px solid var(--xp-blue-dark);
+}
+
+#about-dialog {
+    width: 320px;
+}
+
+#help-dialog {
+    width: 420px;
+    max-width: 95%;
+}
+
+/* Shutdown Dialog Custom Styling */
+#shutdown-dialog {
+    width: 340px;
+}
+
+.shutdown-body {
+    background: linear-gradient(to right, #004E98 0%, #002f6c 100%);
+    color: white;
+    padding: 15px;
+    border: 1px inset #fff;
+}
+
+.shutdown-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+.shutdown-options {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.shutdown-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+    cursor: pointer;
+}
+
+.shutdown-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+.shutdown-btn.standby {
+    background: #e0aa3e;
+}
+
+.shutdown-btn.turn-off {
+    background: #c0392b;
+}
+
+.shutdown-btn.restart {
+    background: #27ae60;
+}
+
+.shutdown-label {
+    font-size: 11px;
+    margin-top: 6px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+.shutdown-option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.shutdown-option.disabled .shutdown-btn {
+    cursor: not-allowed;
+}
+
+/* Retro Shutdown Screen */
+#shutdown-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ff9900;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.shutdown-screen-msg {
+    font-size: 26px;
+    margin: 0 0 20px 0;
+}
+
+.shutdown-screen-sub {
+    font-size: 14px;
+    color: #888;
+}
